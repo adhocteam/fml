@@ -18,5 +18,6 @@ form:
 
     f = DTTForm.new(form)
     expect(f.title).to eq "Diabetes mellitus evaluation"
+    expect(f.form).to eq YAML.load(form)["form"]
   end
 end
