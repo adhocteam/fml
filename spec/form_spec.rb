@@ -2,18 +2,7 @@ require 'dttforms'
 
 describe "Basic form handling" do
   it "creates a form from a FML spec" do
-    #TODO stick this in a feile
-    form = <<-eos
-form:
-  title: "Diabetes mellitus evaluation"
-  fieldsets:
-    - fieldset:
-      - field:
-          name: "hasDiabetes"
-          fieldType: "yes_no"
-          label: "bananarama"
-          isRequired: true
-    eos
+    form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
 
     f = DTTForms::DTTForm.new(form)
     expect(f.title).to eq "Diabetes mellitus evaluation"

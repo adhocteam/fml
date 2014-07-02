@@ -1,0 +1,14 @@
+.row
+  .h1
+    = Diabetes mellitus evaluation
+  .row
+    .small-12.columns
+      = f.label :hasDiabetes, "bananarama"
+  .row
+    .small-12.columns
+      = f.radio_button :hasDiabetes, false, text: "No"
+      No
+  .row
+    .small-12.columns
+      = f.radio_button :hasDiabetes, true, text: "Yes"
+      Yes

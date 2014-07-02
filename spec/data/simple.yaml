@@ -1,0 +1,9 @@
+form:
+  title: "Diabetes mellitus evaluation"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "hasDiabetes"
+          fieldType: "yes_no"
+          label: "bananarama"
+          isRequired: true
