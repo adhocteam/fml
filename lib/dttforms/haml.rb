@@ -1,35 +1,19 @@
 require 'mustache'
 
-#TODO: stick these in a file
-HEADER = <<-eos
-.row
-  .h1
-    = {{ title }}
-eos
-
-YES_NO = <<-eos
-  .row
-    .small-12.columns
-      = f.label :{{ name }}, "{{ label }}"
-  .row
-    .small-12.columns
-      = f.radio_button :{{ name }}, false, text: "No"
-      No
-  .row
-    .small-12.columns
-      = f.radio_button :{{ name }}, true, text: "Yes"
-      Yes
-eos
-
 module DTTForms
   class HamlAdapter
-    @@templates = {
-      "header" => HEADER,
-      "yes_no" => YES_NO,
-    }
-
-    def initialize(form)
+    def initialize(form, template_dir=nil)
       @form = form
+      if template_dir.nil?
+        template_dir = File.join(File.dirname(__FILE__), "haml_templates")
+      end
+
+      # In your template dir, there should be a template for "header" and
+      # for each form type. They should all end with .haml.mustache
+      @@templates = {}
+      Dir.glob(File.join(template_dir, "*.haml.mustache")) do |file|
+        @@templates[File.basename(file)[0..-15]] = File.read(file)
+      end
     end
 
     def render
