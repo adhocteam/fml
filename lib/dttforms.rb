@@ -1,5 +1,5 @@
 require "dttforms/version"
+require "dttforms/dttform"
 
 module Dttforms
-  # Your code goes here...
 end
