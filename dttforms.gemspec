@@ -5,7 +5,7 @@ require 'dttforms/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "dttforms"
-  spec.version       = Dttforms::VERSION
+  spec.version       = DTTForms::VERSION
   spec.authors       = ["Bill Mill"]
   spec.email         = ["bill.mill@gmail.com"]
   spec.summary       = %q{Read FML and create forms}

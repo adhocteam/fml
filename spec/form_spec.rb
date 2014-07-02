@@ -15,7 +15,7 @@ form:
           isRequired: true
     eos
 
-    f = DTTForm.new(form)
+    f = DTTForms::DTTForm.new(form)
     expect(f.title).to eq "Diabetes mellitus evaluation"
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.fieldsets.length).to eq 1
