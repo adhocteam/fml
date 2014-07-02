@@ -1,15 +1,13 @@
 require 'mustache'
 
-module DTTForms
-  class HamlAdapter
-    @@templates = {
-      header: <<-eos
+#TODO: stick these in a file
+HEADER = <<-eos
 .row
   .h1
     = {{ title }}
-    eos,
+eos
 
-      yes_no: <<-eos
+YES_NO = <<-eos
   .row
     .small-12.columns
       = f.label :{{ name }}, "{{ label }}"
@@ -21,7 +19,13 @@ module DTTForms
     .small-12.columns
       = f.radio_button :{{ name }}, true, text: "Yes"
       Yes
-    eos
+eos
+
+module DTTForms
+  class HamlAdapter
+    @@templates = {
+      "header" => HEADER,
+      "yes_no" => YES_NO,
     }
 
     def initialize(form)
@@ -29,7 +33,7 @@ module DTTForms
     end
 
     def render
-      out = Mustache.render(@@templates[:header], :title => @form.title)
+      out = Mustache.render(@@templates["header"], :title => @form.title)
       @form.fieldsets.each do |fieldset|
         fieldset.each do |field|
           out += Mustache.render(@@templates[field.type], field.to_h)
