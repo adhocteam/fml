@@ -1,9 +1,9 @@
-require 'mustache'
+require 'haml'
 
 module DTTForms
   class HamlAdapter
-    def initialize(form, template_dir=nil)
-      @form = form
+    def initialize(formspec, template_dir=nil)
+      @formspec = formspec
       if template_dir.nil?
         template_dir = File.join(File.dirname(__FILE__), "haml_templates")
       end
@@ -11,16 +11,20 @@ module DTTForms
       # In your template dir, there should be a template for "header" and
       # for each form type. They should all end with .haml.mustache
       @@templates = {}
-      Dir.glob(File.join(template_dir, "*.haml.mustache")) do |file|
-        @@templates[File.basename(file)[0..-15]] = File.read(file)
+      Dir.glob(File.join(template_dir, "*.haml")) do |file|
+        @@templates[File.basename(file)[0..-6]] = Haml::Engine.new(File.read(file))
       end
     end
 
-    def render
-      out = Mustache.render(@@templates["header"], :title => @form.title)
-      @form.fieldsets.each do |fieldset|
+    def render(railsform)
+      o = Object.new
+      locals = {formspec: @formspec, f: railsform}
+      p @@templates
+      out = @@templates["header"].render(o, locals)
+      @formspec.fieldsets.each do |fieldset|
         fieldset.each do |field|
-          out += Mustache.render(@@templates[field.type], field.to_h)
+          locals[:field] = field
+          out += @@templates[field.type].render(o, locals)
         end
       end
       out
