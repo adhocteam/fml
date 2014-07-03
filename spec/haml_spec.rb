@@ -17,7 +17,7 @@ describe "HAML generation" do
 
     h = DTTForms::HamlAdapter.new(f)
     output = h.render(Formmock.new)
-    expected = File.read(File.join(File.dirname(__FILE__), "data", "simple.haml"))
+    expected = File.read(File.join(File.dirname(__FILE__), "data", "simple.html"))
     expect(output).to eq expected
   end
 end

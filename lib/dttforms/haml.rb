@@ -9,7 +9,7 @@ module DTTForms
       end
 
       # In your template dir, there should be a template for "header" and
-      # for each form type. They should all end with .haml.mustache
+      # for each form type. They should all end with .haml
       @@templates = {}
       Dir.glob(File.join(template_dir, "*.haml")) do |file|
         @@templates[File.basename(file)[0..-6]] = Haml::Engine.new(File.read(file))
@@ -19,7 +19,6 @@ module DTTForms
     def render(railsform)
       o = Object.new
       locals = {formspec: @formspec, f: railsform}
-      p @@templates
       out = @@templates["header"].render(o, locals)
       @formspec.fieldsets.each do |fieldset|
         fieldset.each do |field|
