@@ -18,9 +18,11 @@ module DTTForms
       @conn = connection_type.new(opts)
     end
 
+    # return a spec document or raise an IndexError if one wasn't found
     def get_spec(specid)
       results = conn.exec_params("SELECT * FROM specs WHERE specid=$1", [specid])
-      # Fires an IndexError on failure to find a spec
+
+      # PGResult fires an indexerror; make sure to raise instead of return nil
       results[0]
     end
   end

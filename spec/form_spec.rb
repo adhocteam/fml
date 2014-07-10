@@ -27,4 +27,11 @@ describe "Basic form handling" do
     expect(f.fieldsets.length).to eq 1
     expect(f.fieldsets[0].length).to eq 1
   end
+
+  it "raises an IndexError if the spec wasn't found" do
+    conn = double(DTTForms::Connection)
+    allow(conn).to receive(:get_spec).and_raise(IndexError.new("error"))
+
+    expect { DTTForms::DTTForm.get_spec(conn, 1234) }.to raise_exception IndexError
+  end
 end
