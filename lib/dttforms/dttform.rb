@@ -37,6 +37,10 @@ module DTTForms
       parse(YAML.load(form))
     end
 
+    def self.get_spec(conn, specid)
+      DTTForm.new(conn.get_spec(specid)[0])
+    end
+
     private
 
     def parse(yaml)
