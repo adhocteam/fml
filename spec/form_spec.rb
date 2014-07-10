@@ -19,7 +19,8 @@ describe "Basic form handling" do
 
   it "gets a form spec from the DB" do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
-    conn = double(DTTForms::Connection, :get_spec => [form])
+    row = ["1", "form title", "1.0", form, Time.now, Time.now]
+    conn = double(DTTForms::Connection, :get_spec => row)
     f = DTTForms::DTTForm.get_spec(conn, 1234)
 
     expect(f.title).to eq "Diabetes mellitus evaluation"

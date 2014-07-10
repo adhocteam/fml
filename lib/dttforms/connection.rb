@@ -20,7 +20,11 @@ module DTTForms
 
     # return a spec document or raise an IndexError if one wasn't found
     def get_spec(specid)
-      results = conn.exec_params("SELECT * FROM specs WHERE specid=$1", [specid])
+      results = conn.exec_params(<<-SQL, [specid])
+        SELECT id, title, version, spec, created_at, updated_at
+        FROM fml_specs
+        WHERE specid=$1
+      SQL
 
       # PGResult fires an indexerror; make sure to raise instead of return nil
       results[0]

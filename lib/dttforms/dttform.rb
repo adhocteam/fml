@@ -38,7 +38,7 @@ module DTTForms
     end
 
     def self.get_spec(conn, specid)
-      DTTForm.new(conn.get_spec(specid)[0])
+      DTTForm.new(conn.get_spec(specid)[3])
     end
 
     private
