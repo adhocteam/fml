@@ -34,3 +34,9 @@ task :maketables do
     )
   SQL
 end
+
+task :deploy do
+  sh "rm fml*.gem"
+  sh "gem build fml.gemspec"
+  sh "gem inabox fml*.gem"
+end
