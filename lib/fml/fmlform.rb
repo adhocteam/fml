@@ -1,7 +1,7 @@
 require 'yaml'
 
-module DTTForms
-  class DTTField
+module FML
+  class FMLField
     attr_reader :name, :type, :label, :prompt, :required, :options,
       :conditional_on, :validations
 
@@ -30,7 +30,7 @@ module DTTForms
     end
   end
 
-  class DTTForm
+  class FMLForm
     attr_reader :form, :title, :fieldsets
 
     def initialize(form)
@@ -38,7 +38,7 @@ module DTTForms
     end
 
     def self.get_spec(conn, specid)
-      DTTForm.new(conn.get_spec(specid)[3])
+      FMLForm.new(conn.get_spec(specid)[3])
     end
 
     private
@@ -67,7 +67,7 @@ module DTTForms
       conditional = field["conditionalOn"]
       validations = field["validations"]
 
-      DTTField.new(name, type, label, prompt, is_required, options, conditional,
+      FMLField.new(name, type, label, prompt, is_required, options, conditional,
                    validations)
     end
 

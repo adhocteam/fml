@@ -1,4 +1,4 @@
-require 'dttforms'
+require 'fml'
 
 class FakeConnection
   attr_reader :opts, :queries
@@ -29,7 +29,7 @@ describe "Connection handling" do
   it "creates a connection object" do
     dbname = "database_name"
     user = "database_user"
-    conn = DTTForms::Connection.new({
+    conn = FML::Connection.new({
       dbname: dbname,
       user: user
     }, connection_type=FakeConnection)
@@ -42,7 +42,7 @@ describe "Connection handling" do
   it "gets a spec" do
     dbname = "database_name"
     user = "database_user"
-    conn = DTTForms::Connection.new({
+    conn = FML::Connection.new({
       dbname: dbname,
       user: user
     }, connection_type=FakeConnection)
@@ -58,7 +58,7 @@ describe "Connection handling" do
   it "fails with an IndexError if the spec isn't found" do
     dbname = "database_name"
     user = "database_user"
-    conn = DTTForms::Connection.new({
+    conn = FML::Connection.new({
       dbname: dbname,
       user: user
     }, connection_type=FakeConnection)

@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'dttforms/version'
+require 'fml/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "dttforms"
-  spec.version       = DTTForms::VERSION
+  spec.name          = "fml"
+  spec.version       = FML::VERSION
   spec.authors       = ["Bill Mill"]
   spec.email         = ["bill.mill@gmail.com"]
   spec.summary       = %q{Read FML and create forms}

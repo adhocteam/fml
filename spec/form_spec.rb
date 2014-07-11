@@ -1,10 +1,10 @@
-require 'dttforms'
+require 'fml'
 
 describe "Basic form handling" do
   it "creates a form from a FML spec" do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
 
-    f = DTTForms::DTTForm.new(form)
+    f = FML::FMLForm.new(form)
     expect(f.title).to eq "Diabetes mellitus evaluation"
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.fieldsets.length).to eq 1
@@ -20,8 +20,8 @@ describe "Basic form handling" do
   it "gets a form spec from the DB" do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
     row = ["1", "form title", "1.0", form, Time.now, Time.now]
-    conn = double(DTTForms::Connection, :get_spec => row)
-    f = DTTForms::DTTForm.get_spec(conn, 1234)
+    conn = double(FML::Connection, :get_spec => row)
+    f = FML::FMLForm.get_spec(conn, 1234)
 
     expect(f.title).to eq "Diabetes mellitus evaluation"
     expect(f.form).to eq YAML.load(form)["form"]
@@ -30,9 +30,9 @@ describe "Basic form handling" do
   end
 
   it "raises an IndexError if the spec wasn't found" do
-    conn = double(DTTForms::Connection)
+    conn = double(FML::Connection)
     allow(conn).to receive(:get_spec).and_raise(IndexError.new("error"))
 
-    expect { DTTForms::DTTForm.get_spec(conn, 1234) }.to raise_exception IndexError
+    expect { FML::FMLForm.get_spec(conn, 1234) }.to raise_exception IndexError
   end
 end

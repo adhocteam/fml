@@ -1,9 +1,9 @@
 require 'pg'
 
-module DTTForms
+module FML
   # If we end up needing multiple types of connections, this should become abstract.
   # For now, it's both the abstract and the PGConnection. Its responsibility is to
-  # insulate the dttform from having to know anything about the backend
+  # insulate the fmlform from having to know anything about the backend
   class Connection
     attr_reader :conn
 

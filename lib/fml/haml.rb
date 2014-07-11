@@ -1,6 +1,6 @@
 require 'haml'
 
-module DTTForms
+module FML
   class HamlAdapter
     def initialize(formspec, template_dir=nil)
       @formspec = formspec

@@ -1,4 +1,4 @@
-require 'dttforms'
+require 'fml'
 
 class Formmock
   def label(name, label)
@@ -10,12 +10,12 @@ class Formmock
 end
 
 describe "HAML generation" do
-  it "creates a HAML from a DTTForm" do
+  it "creates a HAML from a FMLForm" do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
 
-    f = DTTForms::DTTForm.new(form)
+    f = FML::FMLForm.new(form)
 
-    h = DTTForms::HamlAdapter.new(f)
+    h = FML::HamlAdapter.new(f)
     output = h.render(Formmock.new)
     expected = File.read(File.join(File.dirname(__FILE__), "data", "simple.html"))
     expect(output).to eq expected
