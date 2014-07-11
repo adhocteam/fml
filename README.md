@@ -1,4 +1,4 @@
-# Dttforms
+# FMLForms
 
 Render [FML form documents](https://docs.google.com/a/adhocteam.us/document/d/1GBfEEJ48grDz0qwK-Tjppdmpp6mDBCND0UfrA0u1WF4/edit) into other formats.
 
@@ -10,7 +10,7 @@ To run the tests just run `bundle install` then `rake`
 
 Add this line to your application's Gemfile:
 
-    gem 'dttforms'
+    gem 'fmlforms'
 
 And then execute:
 
@@ -18,4 +18,4 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install dttforms
+    $ gem install fmlforms
