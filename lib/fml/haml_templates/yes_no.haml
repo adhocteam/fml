@@ -1,11 +1,9 @@
 .row
   .small-12.columns
-    = f.label field.name, field.label
+    %label{for: field.name} #{field.label}
 .row
   .small-12.columns
-    = f.radio_button field.name, false, text: "No"
-    No
+    %input{type: "radio", name: field.name, value: "false"} No
 .row
   .small-12.columns
-    = f.radio_button field.name, true, text: "Yes"
-    Yes
+    %input{type: "radio", name: field.name, value: "true"} Yes

@@ -16,9 +16,9 @@ module FML
       end
     end
 
-    def render(railsform)
+    def render()
       o = Object.new
-      locals = {formspec: @formspec, f: railsform}
+      locals = {formspec: @formspec}
       out = @@templates["header"].render(o, locals)
       @formspec.fieldsets.each do |fieldset|
         fieldset.each do |field|
