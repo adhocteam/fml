@@ -1,3 +1,6 @@
+require 'json'
+require 'yaml'
+
 require "fml/version"
 require "fml/fmlform"
 require "fml/fmlfield"

@@ -1,5 +1,3 @@
-require 'yaml'
-
 module FML
   class FMLForm
     attr_reader :form, :title, :version, :fieldsets, :fields
@@ -20,6 +18,21 @@ module FML
 
     def to_json
       #TODO: turn an FMLForm into a json doc
+      form = {
+        form: {
+          title: @title,
+          version: @version,
+          fieldsets: []
+        }
+      }
+      @fieldsets.each do |fieldset|
+        fields = []
+        fieldset.each do |field|
+          fields << field.to_h
+        end
+        form[:form][:fieldsets] << fields
+      end
+      form.to_json
     end
 
     private
