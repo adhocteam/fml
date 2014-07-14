@@ -17,4 +17,13 @@ describe "Basic form handling" do
     expect(field.label).to eq "bananarama"
     expect(field.required).to eq true
   end
+
+  it "can fill in a form" do
+    form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
+
+    f = FML::FMLForm.new(form)
+    params = {hasDiabetes: "true"}
+    f.fill(params)
+    expect(f.fieldsets[0][0].value).to eq "true"
+  end
 end
