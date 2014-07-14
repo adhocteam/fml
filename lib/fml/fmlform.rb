@@ -28,11 +28,16 @@ module FML
       @fieldsets.each do |fieldset|
         fields = []
         fieldset.each do |field|
-          fields << field.to_h
+          fields << {field: field.to_h}
         end
-        form[:form][:fieldsets] << fields
+        form[:form][:fieldsets] << {fieldset: fields}
       end
       form.to_json
+    end
+
+    # Turn a json form into yaml and return an FMLForm instance
+    def self.from_json(json)
+      FMLForm.new(JSON.parse(json).to_yaml)
     end
 
     private
@@ -68,8 +73,15 @@ module FML
     end
 
     def getrequired(obj, attr)
-      x = obj[attr]
-      if x.nil?
+      begin
+        x = obj[attr]
+        if x.nil?
+          raise KeyError.new("Could not find required `#{attr}` attribute in #{obj}")
+        end
+      # bare except sucks, but this has raised at least: NoMethodError and TypeError.
+      # I wish there were documentation on what errors could be raised so that I
+      # could except only those ones
+      rescue
         raise KeyError.new("Could not find required `#{attr}` attribute in #{obj}")
       end
       x
