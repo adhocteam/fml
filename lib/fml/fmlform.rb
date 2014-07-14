@@ -10,8 +10,8 @@ module FML
     end
 
     def fill(params)
-      params.each do |field|
-        if @fields.has? field
+      params.each do |field, value|
+        if @fields.has_key? field
           @fields[field].value = params[field]
         end
       end
@@ -50,7 +50,7 @@ module FML
 
       field = FMLField.new(name, type, label, prompt, is_required, options,
                            conditional, validations)
-      @fields[name.to_s] = field
+      @fields[name.to_sym] = field
     end
 
     def getrequired(obj, attr)

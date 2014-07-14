@@ -3,7 +3,7 @@ module FML
     attr_reader :name, :type, :label, :prompt, :required, :options,
       :conditional_on, :validations
 
-    attr_writer :value
+    attr_accessor :value
 
     def initialize(name, type, label, prompt, required, options, conditional_on,
                   validations)
