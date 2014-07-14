@@ -17,16 +17,22 @@ module FML
     end
 
     def render()
-      o = Object.new
       locals = {formspec: @formspec}
-      out = @@templates["header"].render(o, locals)
+      out = _render("header", locals)
       @formspec.fieldsets.each do |fieldset|
         fieldset.each do |field|
           locals[:field] = field
-          out += @@templates[field.type].render(o, locals)
+          out += _render(field.type, locals)
         end
       end
       out
+    end
+
+    private
+
+    def _render(template, locals)
+      o = Object.new
+      @@templates[template].render(o, locals)
     end
   end
 end
