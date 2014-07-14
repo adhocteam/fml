@@ -22,12 +22,12 @@ module FML
 
     def to_h
       {name: @name,
-       type: @type,
+       fieldType: @type,
        label: @label,
        prompt: @prompt,
-       required: @required,
+       isRequired: @required,
        options: @options,
-       conditional_on: @conditional_on,
+       conditionalOn: @conditional_on,
        validations: @validations,
        value: @value,
       }
