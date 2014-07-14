@@ -2,10 +2,23 @@ require 'yaml'
 
 module FML
   class FMLForm
-    attr_reader :form, :title, :fieldsets
+    attr_reader :form, :title, :version, :fieldsets, :fields
 
     def initialize(form)
+      @fields = {}
       parse(YAML.load(form))
+    end
+
+    def fill(params)
+      params.each do |field|
+        if @fields.has? field
+          @fields[field].value = params[field]
+        end
+      end
+    end
+
+    def to_json
+      #TODO: turn an FMLForm into a json doc
     end
 
     private
@@ -13,6 +26,7 @@ module FML
     def parse(yaml)
       @form = getrequired(yaml, "form")
       @title = getrequired(@form, "title")
+      @version = getrequired(@form, "version")
 
       # @fieldsets is just a list of lists of fields
       @fieldsets = getrequired(@form, "fieldsets").collect do |fieldset|
@@ -34,8 +48,9 @@ module FML
       conditional = field["conditionalOn"]
       validations = field["validations"]
 
-      FMLField.new(name, type, label, prompt, is_required, options, conditional,
-                   validations)
+      field = FMLField.new(name, type, label, prompt, is_required, options,
+                           conditional, validations)
+      @fields[name.to_s] = field
     end
 
     def getrequired(obj, attr)
