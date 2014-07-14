@@ -1,5 +1,6 @@
 form:
   title: "Diabetes mellitus evaluation"
+  version: "1.0"
   fieldsets:
     - fieldset:
       - field:

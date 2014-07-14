@@ -7,6 +7,7 @@ describe "Basic form handling" do
     f = FML::FMLForm.new(form)
     expect(f.title).to eq "Diabetes mellitus evaluation"
     expect(f.form).to eq YAML.load(form)["form"]
+    expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
     expect(f.fieldsets[0].length).to eq 1
 
