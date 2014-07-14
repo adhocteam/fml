@@ -11,8 +11,10 @@ module FML
       # In your template dir, there should be a template for "header" and
       # for each form type. They should all end with .haml
       @@templates = {}
-      Dir.glob(File.join(template_dir, "*.haml")) do |file|
-        @@templates[File.basename(file)[0..-6]] = Haml::Engine.new(File.read(file))
+      if @@templates.empty?
+        Dir.glob(File.join(template_dir, "*.haml")) do |file|
+          @@templates[File.basename(file)[0..-6]] = Haml::Engine.new(File.read(file))
+        end
       end
     end
 
@@ -23,6 +25,18 @@ module FML
         fieldset.each do |field|
           locals[:field] = field
           out += _render(field.type, locals)
+        end
+      end
+      out
+    end
+
+    def render_show()
+      locals = {formspec: @formspec}
+      out = _render("header_show", locals)
+      @formspec.fieldsets.each do |fieldset|
+        fieldset.each do |field|
+          locals[:field] = field
+          out += _render("#{field.type}_show", locals)
         end
       end
       out
