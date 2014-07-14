@@ -15,6 +15,7 @@ module FML
           @fields[field].value = params[field]
         end
       end
+      self
     end
 
     def to_json

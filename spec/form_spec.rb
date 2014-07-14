@@ -23,7 +23,8 @@ describe "Basic form handling" do
 
     f = FML::FMLForm.new(form)
     params = {hasDiabetes: "true"}
-    f.fill(params)
+    form = f.fill(params)
     expect(f.fieldsets[0][0].value).to eq "true"
+    expect(form).to be_a(FML::FMLForm)
   end
 end
