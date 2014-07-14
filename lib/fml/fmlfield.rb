@@ -3,6 +3,8 @@ module FML
     attr_reader :name, :type, :label, :prompt, :required, :options,
       :conditional_on, :validations
 
+    attr_writer :value
+
     def initialize(name, type, label, prompt, required, options, conditional_on,
                   validations)
       @name = name
@@ -13,6 +15,9 @@ module FML
       @options = options
       @conditional_on = conditional_on
       @validations = validations
+
+      # If a field gets filled in, it sets value to a value. It may remain nil.
+      @value = nil
     end
 
     def to_h
