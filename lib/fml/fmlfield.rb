@@ -29,6 +29,7 @@ module FML
        options: @options,
        conditional_on: @conditional_on,
        validations: @validations,
+       value: @value,
       }
     end
   end
