@@ -37,10 +37,6 @@ module FML
       parse(YAML.load(form))
     end
 
-    def self.get_spec(conn, specid)
-      FMLForm.new(conn.get_spec(specid)[3])
-    end
-
     private
 
     def parse(yaml)
