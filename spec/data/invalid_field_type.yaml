@@ -1,0 +1,10 @@
+form:
+  title: "Invalid Field Type"
+  version: "1.0"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "hasDiabetes"
+          fieldType: "notavalidtype"
+          label: "bananarama"
+          isRequired: true

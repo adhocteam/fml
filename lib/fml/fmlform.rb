@@ -57,7 +57,13 @@ module FML
 
     def parsefield(field)
       name = getrequired(field, "name")
+
       type = getrequired(field, "fieldType")
+      validtypes = ["string", "text", "select", "multi-select", "yes_no", "boolean", "date", "time", "checkbox"]
+      if validtypes.index(type).nil?
+        raise InvalidSpec.new("Invalid field type #{type} in form field #{field}")
+      end
+
       label = getrequired(field, "label")
       prompt = field["prompt"]
       is_required = field["isRequired"]
@@ -86,5 +92,8 @@ module FML
       end
       x
     end
+  end
+
+  class InvalidSpec<Exception
   end
 end

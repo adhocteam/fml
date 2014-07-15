@@ -88,4 +88,15 @@ describe FML::FMLForm do
     expect(field.label).to eq "bananarama"
     expect(field.required).to eq true
   end
+
+  it "raises an InvalidSpec error on an invalid field type" do
+    form = File.read(File.join(File.dirname(__FILE__), "data", "invalid_field_type.yaml"))
+
+    expect {FML::FMLForm.new(form)}.to raise_exception FML::InvalidSpec
+    begin
+      FML::FMLForm.new(form)
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq "Invalid field type notavalidtype in form field {\"name\"=>\"hasDiabetes\", \"fieldType\"=>\"notavalidtype\", \"label\"=>\"bananarama\", \"isRequired\"=>true}"
+    end
+  end
 end
