@@ -1,0 +1,124 @@
+form:
+  title: "Diabetes milletues evaluation"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "hasDiabetes"
+          fieldType: "yes_no"
+          label: "Does the patient currently have diabetes mellitus?"
+          isRequired: true
+      - field:
+          name: "fastingPlasmaGlucoseTest"
+          fieldType: "checkbox"
+          label: "Fasting plasma glucose test (<abbr>FPG</abbr>) of > 126 MG/DL on two (2) or more occasions?"
+          isRequired: false
+          conditionalOn: "hasDiabetes"
+      - field:
+          name: "fastingPlasmaGlucoseOccurence1"
+          fieldType: "date"
+          label: "Date"
+          isRequired: false
+          conditionalOn: "fastingPlasmaGlucoseTest"
+      - field:
+          name: "fastingPlasmaGlucoseOccurence2"
+          fieldType: "date"
+          label: "Date"
+          isRequired: false
+          conditionalOn: "fastingPlasmaGlucoseTest"
+      - field:
+          name: "a1cPercent"
+          fieldType: "checkbox"
+          label: "A1C of 6.5% or greater on two (2) or more occasions?"
+          isRequired: false
+          conditionalOn: "hasDiabetes"
+      - field:
+          name: "a1cPercentOccurence1"
+          fieldType: "date"
+          label: "Date"
+          isRequired: false
+          conditionalOn: "fastingPlasmaGlucoseTest"
+      - field:
+          name: "a1cPercentOccurence2"
+          fieldType: "date"
+          label: "Date"
+          isRequired: false
+          conditionalOn: "fastingPlasmaGlucoseTest"
+      - field:
+          name: "twoHourPlasma"
+          fieldType: "checkbox"
+          label: "Two (2) hour plasma glucose of > 200 mg/dl on glucose tolerance test?"
+          isRequired: false
+          conditionalOn: "hasDiabetes"
+      - field:
+          name: "twoHourPlasmaOccurence"
+          fieldType: "date"
+          label: "Date"
+          isRequired: false
+          conditionalOn: "twoHourPlasma"
+      - field:
+          name: "randomPlasmaGlucose"
+          fieldType: "checkbox"
+          label: "Random plasma glucose of 200 mg/DL with classic symptoms of hyperglycemia"
+          isRequied: false
+          conditionalOn: "hasDiabetes"
+      - field:
+          name: "randomPlasmaGlucoseOccurence"
+          fieldType: "date"
+          label: "Date"
+          isRequired: false
+          conditionalOn: "randomPlasmaGlucose"
+      - field:
+          name: "otherTest"
+          fieldType: "checkbox"
+          label: "Other (please explain)"
+          isRequired: false
+          conditionalOn: "hasDiabetes"
+      - field:
+          name: "otherTestExplanation"
+          fieldType: "text"
+          label: "Explanation"
+          isRequired: false
+          conditionalOn: "otherTest"
+      - field:
+          name: "isManagedByDiet"
+          fieldType: "yes_no"
+          label: "Is the patient's diabetes managed by diet?"
+          isRequired: false
+          conditionalOn: "hasDiabetes"
+          disabled: true
+      - field:
+          name: "requiresOralHypoglycemicAgent"
+          fieldType: "yes_no"
+          label: "Does the patient's diabetes mellitus require an oral hypoglycemic agent?"
+          isRequired: false
+          conditionalOn: "hasDiabetes"
+      - field:
+          name: "requiresInsulin"
+          fieldType: "yes_no"
+          label: "Does the patient's diabetes mellitus require insulin?"
+          isRequired: false
+          conditionalOn: "hasDiabetes"
+      - field:
+          name: "moreThanOneDailyInjection"
+          fieldType: "yes_no"
+          label: "More than one injection a day?"
+          isRequired: false
+          conditionalOn: "requiresInsulin"
+      - field:
+          name: "requiresActivityRegulation"
+          fieldType: "yes_no"
+          label: "Does the patient's diabetes mellitus require regulation of activities?"
+          isRequired: false
+          conditionalOn: "hasDiabetes"
+      - field:
+          name: "includesStrenuousActivities"
+          fieldType: "yes_no"
+          label: "Does this regulation include avoidance of strenuous occupational and recreational"
+          isRequired: false
+          conditionalOn: "requiresActivityRegulation"
+      - field:
+          name: "regulationExplanation"
+          fieldType: "text"
+          label: "Please explain how you determined whether the patient requires regulation:"
+          isRequired: false
+          conditionalOn: "requiresActivityRegulation"
