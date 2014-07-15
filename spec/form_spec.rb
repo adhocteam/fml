@@ -5,16 +5,34 @@ describe FML::FMLForm do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
 
     f = FML::FMLForm.new(form)
-    expect(f.title).to eq "Diabetes mellitus evaluation"
+    expect(f.title).to eq "Simple sample form"
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
-    expect(f.fieldsets[0].length).to eq 1
+    expect(f.fieldsets[0].length).to eq 4
 
     field = f.fieldsets[0][0]
     expect(field.name).to eq "hasDiabetes"
     expect(field.type).to eq "yes_no"
     expect(field.label).to eq "bananarama"
+    expect(field.required).to eq true
+
+    field = f.fieldsets[0][1]
+    expect(field.name).to eq "sampleCheckbox"
+    expect(field.type).to eq "checkbox"
+    expect(field.label).to eq "Would you like to check me?"
+    expect(field.required).to eq true
+
+    field = f.fieldsets[0][2]
+    expect(field.name).to eq "sampleDate"
+    expect(field.type).to eq "date"
+    expect(field.label).to eq "Pick any date"
+    expect(field.required).to eq true
+
+    field = f.fieldsets[0][3]
+    expect(field.name).to eq "sampleTextarea"
+    expect(field.type).to eq "text"
+    expect(field.label).to eq "Enter some text"
     expect(field.required).to eq true
   end
 
@@ -38,7 +56,7 @@ describe FML::FMLForm do
 
     expect(json).to be_a(String)
     obj = JSON.parse(json)
-    expect(obj["form"]["title"]).to eq "Diabetes mellitus evaluation"
+    expect(obj["form"]["title"]).to eq "Simple sample form"
     expect(obj["form"]["version"]).to eq "1.0"
     expect(obj["form"]["fieldsets"].length).to eq 1
     expect(obj["form"]["fieldsets"][0].length).to eq 1
@@ -59,10 +77,10 @@ describe FML::FMLForm do
     json = form.to_json
 
     f = FML::FMLForm.from_json(json)
-    expect(f.title).to eq "Diabetes mellitus evaluation"
+    expect(f.title).to eq "Simple sample form"
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
-    expect(f.fieldsets[0].length).to eq 1
+    expect(f.fieldsets[0].length).to eq 4
 
     field = f.fieldsets[0][0]
     expect(field.name).to eq "hasDiabetes"

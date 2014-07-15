@@ -1,5 +1,5 @@
 form:
-  title: "Diabetes mellitus evaluation"
+  title: "Simple sample form"
   version: "1.0"
   fieldsets:
     - fieldset:
@@ -7,4 +7,19 @@ form:
           name: "hasDiabetes"
           fieldType: "yes_no"
           label: "bananarama"
+          isRequired: true
+      - field:
+          name: "sampleCheckbox"
+          fieldType: "checkbox"
+          label: "Would you like to check me?"
+          isRequired: true
+      - field:
+          name: "sampleDate"
+          fieldType: "date"
+          label: "Pick any date"
+          isRequired: true
+      - field:
+          name: "sampleTextarea"
+          fieldType: "text"
+          label: "Enter some text"
           isRequired: true
