@@ -5,11 +5,11 @@ describe FML::FMLForm do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
 
     f = FML::FMLForm.new(form)
-    expect(f.title).to eq "Diabetes mellitus evaluation"
+    expect(f.title).to eq "Simple sample form"
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
-    expect(f.fieldsets[0].length).to eq 1
+    expect(f.fieldsets[0].length).to eq 4
 
     field = f.fieldsets[0][0]
     expect(field.name).to eq "hasDiabetes"
@@ -38,7 +38,7 @@ describe FML::FMLForm do
 
     expect(json).to be_a(String)
     obj = JSON.parse(json)
-    expect(obj["form"]["title"]).to eq "Diabetes mellitus evaluation"
+    expect(obj["form"]["title"]).to eq "Simple sample form"
     expect(obj["form"]["version"]).to eq "1.0"
     expect(obj["form"]["fieldsets"].length).to eq 1
     expect(obj["form"]["fieldsets"][0].length).to eq 1
@@ -59,7 +59,7 @@ describe FML::FMLForm do
     json = form.to_json
 
     f = FML::FMLForm.from_json(json)
-    expect(f.title).to eq "Diabetes mellitus evaluation"
+    expect(f.title).to eq "Simple sample form"
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
     expect(f.fieldsets[0].length).to eq 4
