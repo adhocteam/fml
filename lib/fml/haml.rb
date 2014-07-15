@@ -46,7 +46,13 @@ module FML
 
     def _render(template, locals)
       o = Object.new
+      if !@@templates.has_key? template
+        raise TemplateMissing.new("Unable to find template #{template} in template list #{@@templates}")
+      end
       @@templates[template].render(o, locals)
     end
+  end
+
+  class TemplateMissing<Exception
   end
 end
