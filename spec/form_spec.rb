@@ -16,6 +16,24 @@ describe FML::FMLForm do
     expect(field.type).to eq "yes_no"
     expect(field.label).to eq "bananarama"
     expect(field.required).to eq true
+
+    field = f.fieldsets[0][1]
+    expect(field.name).to eq "sampleCheckbox"
+    expect(field.type).to eq "checkbox"
+    expect(field.label).to eq "Would you like to check me?"
+    expect(field.required).to eq true
+
+    field = f.fieldsets[0][2]
+    expect(field.name).to eq "sampleDate"
+    expect(field.type).to eq "date"
+    expect(field.label).to eq "Pick any date"
+    expect(field.required).to eq true
+
+    field = f.fieldsets[0][3]
+    expect(field.name).to eq "sampleTextarea"
+    expect(field.type).to eq "text"
+    expect(field.label).to eq "Enter some text"
+    expect(field.required).to eq true
   end
 
   it "can fill in a form" do
