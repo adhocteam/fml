@@ -62,7 +62,7 @@ describe FML::FMLForm do
     expect(f.title).to eq "Diabetes mellitus evaluation"
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
-    expect(f.fieldsets[0].length).to eq 1
+    expect(f.fieldsets[0].length).to eq 4
 
     field = f.fieldsets[0][0]
     expect(field.name).to eq "hasDiabetes"
