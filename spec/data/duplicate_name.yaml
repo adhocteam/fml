@@ -1,0 +1,16 @@
+form:
+  title: "Invalid Spec - duplicate name"
+  version: "1.0"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "name"
+          fieldType: "checkbox"
+          label: "bananarama"
+          isRequired: true
+    - fieldset:
+      - field:
+          name: "name"
+          fieldType: "yes_no"
+          label: "gooseegg"
+          isRequired: false

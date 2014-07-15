@@ -32,5 +32,8 @@ module FML
        value: @value,
       }
     end
+
+    def inspect; self.to_h.to_s end
+    def to_s; self.to_h.to_s end
   end
 end

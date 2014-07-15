@@ -99,4 +99,26 @@ describe FML::FMLForm do
       expect(e.message).to eq "Invalid field type notavalidtype in form field {\"name\"=>\"hasDiabetes\", \"fieldType\"=>\"notavalidtype\", \"label\"=>\"bananarama\", \"isRequired\"=>true}"
     end
   end
+
+  it "raises an InvalidSpec error on a missing required field" do
+    form = File.read(File.join(File.dirname(__FILE__), "data", "missing_name.yaml"))
+
+    expect {FML::FMLForm.new(form)}.to raise_exception FML::InvalidSpec
+    begin
+      FML::FMLForm.new(form)
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq "Could not find required `name` attribute in {\"fieldType\"=>\"checkbox\", \"label\"=>\"bananarama\", \"isRequired\"=>true}"
+    end
+  end
+
+  it "raises an error if the spec has a duplicate name" do
+    form = File.read(File.join(File.dirname(__FILE__), "data", "duplicate_name.yaml"))
+
+    expect {FML::FMLForm.new(form)}.to raise_exception FML::InvalidSpec
+    begin
+      FML::FMLForm.new(form)
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq "Duplicate field name name.\nThis field: {:name=>\"name\", :fieldType=>\"yes_no\", :label=>\"gooseegg\", :prompt=>nil, :isRequired=>false, :options=>nil, :conditionalOn=>nil, :validations=>nil, :value=>nil}\nhas the same name as: {:name=>\"name\", :fieldType=>\"checkbox\", :label=>\"bananarama\", :prompt=>nil, :isRequired=>true, :options=>nil, :conditionalOn=>nil, :validations=>nil, :value=>nil}\n"
+    end
+  end
 end

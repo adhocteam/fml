@@ -1,0 +1,9 @@
+form:
+  title: "Invalid Field - missing name"
+  version: "1.0"
+  fieldsets:
+    - fieldset:
+      - field:
+          fieldType: "checkbox"
+          label: "bananarama"
+          isRequired: true

@@ -75,6 +75,14 @@ module FML
 
       field = FMLField.new(name, type, label, prompt, is_required, options,
                            conditional, validations)
+
+      if @fields.has_key? name.to_sym
+        raise InvalidSpec.new(<<-ERR)
+Duplicate field name #{name}.
+This field: #{field.to_s}
+has the same name as: #{@fields[name.to_sym].to_s}
+        ERR
+      end
       @fields[name.to_sym] = field
     end
 
@@ -82,13 +90,13 @@ module FML
       begin
         x = obj[attr]
         if x.nil?
-          raise KeyError.new("Could not find required `#{attr}` attribute in #{obj}")
+          raise InvalidSpec.new("Could not find required `#{attr}` attribute in #{obj}")
         end
       # bare except sucks, but this has raised at least: NoMethodError and TypeError.
       # I wish there were documentation on what errors could be raised so that I
       # could except only those ones
       rescue
-        raise KeyError.new("Could not find required `#{attr}` attribute in #{obj}")
+        raise InvalidSpec.new("Could not find required `#{attr}` attribute in #{obj}")
       end
       x
     end
