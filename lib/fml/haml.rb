@@ -13,7 +13,14 @@ module FML
       @@templates = {}
       if @@templates.empty?
         Dir.glob(File.join(template_dir, "*.haml")) do |file|
-          @@templates[File.basename(file)[0..-6]] = Haml::Engine.new(File.read(file))
+          begin
+            @@templates[File.basename(file)[0..-6]] = Haml::Engine.new(File.read(file))
+          rescue Haml::SyntaxError => e
+            raise InvalidTemplate.new(<<-ERR, e)
+Unable to parse file due to Haml syntax error:
+#{file}:#{e.line}: #{e.message}
+            ERR
+          end
         end
       end
     end
@@ -47,12 +54,20 @@ module FML
     def _render(template, locals)
       o = Object.new
       if !@@templates.has_key? template
-        raise TemplateMissing.new("Unable to find template #{template} in template list #{@@templates}")
+        raise TemplateMissing.new("Unable to find template \"#{template}\" in template list #{@@templates}")
       end
       @@templates[template].render(o, locals)
     end
   end
 
   class TemplateMissing<Exception
+  end
+
+  class InvalidTemplate<Exception
+    attr_reader :hamlerror
+    def initialize(message, hamlerror)
+      super(message)
+      @hamlerror = hamlerror
+    end
   end
 end
