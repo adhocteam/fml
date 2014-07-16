@@ -80,9 +80,10 @@ JSON parser raised an error:
       options = field["options"]
       conditional = field["conditionalOn"]
       validations = field["validations"]
+      value = field["value"]
 
       field = FMLField.new(name, type, label, prompt, is_required, options,
-                           conditional, validations)
+                           conditional, validations, value)
 
       if @fields.has_key? name
         raise InvalidSpec.new(<<-ERR)

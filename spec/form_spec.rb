@@ -36,6 +36,17 @@ describe FML::FMLForm do
     expect(field.required).to eq true
   end
 
+  it "preserves the value" do
+    form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
+
+    # Add the "value" attribute to hasDiabetes and give it "true"
+    y = YAML.load(form)
+    y["form"]["fieldsets"][0]["fieldset"][0]["field"]["value"] = "true"
+
+    f = FML::FMLForm.new(y.to_yaml)
+    expect(f.fieldsets[0][0].value).to eq "true"
+  end
+
   it "can fill in a form" do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
 
