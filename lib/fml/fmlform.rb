@@ -76,14 +76,14 @@ module FML
       field = FMLField.new(name, type, label, prompt, is_required, options,
                            conditional, validations)
 
-      if @fields.has_key? name.to_sym
+      if @fields.has_key? name
         raise InvalidSpec.new(<<-ERR)
 Duplicate field name #{name}.
 This field: #{field.to_s}
-has the same name as: #{@fields[name.to_sym].to_s}
+has the same name as: #{@fields[name].to_s}
         ERR
       end
-      @fields[name.to_sym] = field
+      @fields[name] = field
     end
 
     def getrequired(obj, attr)

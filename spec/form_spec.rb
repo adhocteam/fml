@@ -40,7 +40,7 @@ describe FML::FMLForm do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
 
     f = FML::FMLForm.new(form)
-    params = {hasDiabetes: "true"}
+    params = {"hasDiabetes" => "true"}
     form = f.fill(params)
     expect(f.fieldsets[0][0].value).to eq "true"
     expect(form).to be_a(FML::FMLForm)
@@ -50,7 +50,7 @@ describe FML::FMLForm do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
 
     f = FML::FMLForm.new(form)
-    params = {hasDiabetes: "true"}
+    params = {"hasDiabetes" => "true"}
     form = f.fill(params)
     json = form.to_json
 
@@ -72,7 +72,7 @@ describe FML::FMLForm do
   it "can load itself from json" do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
 
-    params = {hasDiabetes: "true"}
+    params = {"hasDiabetes" => "true"}
     form = FML::FMLForm.new(form).fill(params)
     json = form.to_json
 
