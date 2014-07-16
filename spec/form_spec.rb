@@ -89,6 +89,15 @@ describe FML::FMLForm do
     expect(field.required).to eq true
   end
 
+  it "raises an InvalidSpec error on invalid json" do
+    expect {FML::FMLForm.from_json("{\ninvalid json")}.to raise_exception FML::InvalidSpec
+    begin
+      FML::FMLForm.from_json("{\ninvalid json")
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq "JSON parser raised an error:\n757: unexpected token at '{\ninvalid json'\n"
+    end
+  end
+
   it "raises an InvalidSpec error on an invalid field type" do
     form = File.read(File.join(File.dirname(__FILE__), "data", "invalid_field_type.yaml"))
 

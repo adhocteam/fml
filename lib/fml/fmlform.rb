@@ -37,7 +37,15 @@ module FML
 
     # Turn a json form into yaml and return an FMLForm instance
     def self.from_json(json)
-      FMLForm.new(JSON.parse(json).to_yaml)
+      begin
+        json = JSON.parse(json)
+      rescue JSON::JSONError => e
+        raise FML::InvalidSpec.new(<<-EOM)
+JSON parser raised an error:
+#{e.message}
+        EOM
+      end
+      FMLForm.new(json.to_yaml)
     end
 
     private
