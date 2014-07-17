@@ -70,6 +70,15 @@ JSON parser raised an error:
     def validate
       errors = []
 
+      # check required fields
+      @fields.each do |name,field|
+        if field.required && field.value.nil?
+          errors << ValidationError.new(<<-EOM, field.name)
+Field #{name.inspect} is required
+          EOM
+        end
+      end
+
       # check conditional fields
       @conditional.each do |field, dependents|
         field = @fields[field]
@@ -79,7 +88,7 @@ JSON parser raised an error:
         dependents.each do |dep|
           dep = @fields[dep]
           if dep.value.nil? != isnil
-            errors << ValidationError.new(<<-EOM, dep.name, field.name)
+            errors << DependencyError.new(<<-EOM, dep.name, field.name)
 Expected #{dep.name}:#{dep.value.inspect} to be #{err} because it depends on #{field.name}:#{field.value.inspect} which is #{err} 
             EOM
           end
@@ -170,11 +179,18 @@ has the same name as: #{@fields[name].to_s}
   end
 
   class ValidationError<Exception
-    attr :dependent_field_name, :depends_on_field_name
-    def initialize(message, dependent_field_name, depends_on_field_name)
+    attr :field_name
+    def initialize(message, field_name)
       super(message)
-      @dependent_field_name = dependent_field_name
-      @depends_on_field_name = depends_on_field_name
+      @field_name = field_name
+    end
+  end
+
+  class DependencyError<ValidationError
+    attr :depends_on
+    def initialize(message, field_name, depends_on)
+      @depends_on = depends_on
+      super(message, field_name)
     end
   end
 

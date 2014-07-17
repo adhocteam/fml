@@ -7,16 +7,16 @@ form:
           name: "RootQ"
           fieldType: "yes_no"
           label: "The Root Question"
-          isRequired: true
+          isRequired: false
       - field:
           name: "DependsOnRoot"
           fieldType: "text"
           label: "Secondary"
-          isRequired: true
+          isRequired: false
           conditionalOn: "RootQ"
       - field:
           name: "Tertiary"
           fieldType: "date"
           label: "Depends on Secondary"
-          isRequired: true
+          isRequired: false
           conditionalOn: "DependsOnRoot"

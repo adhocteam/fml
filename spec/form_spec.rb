@@ -39,24 +39,37 @@ describe FML::FMLForm do
   it "preserves the value" do
     form = getdata("simple.yaml")
 
-    # Add the "value" attribute to hasDiabetes and give it "true"
+    # Add the "value" attribute to hasDiabetes and give it "yes"
     y = YAML.load(form)
-    y["form"]["fieldsets"][0]["fieldset"][0]["field"]["value"] = "true"
+    y["form"]["fieldsets"][0]["fieldset"][0]["field"]["value"] = "yes"
 
     f = FML::FMLForm.new(y.to_yaml)
-    expect(f.fieldsets[0][0].value).to eq "true"
+    expect(f.fieldsets[0][0].value).to eq "yes"
   end
 
   it "can fill in a form" do
-    params = {"hasDiabetes" => "true"}
+    params = {
+      "hasDiabetes" => "yes",
+      "sampleCheckbox" => "1",
+      "sampleDate" => "01/01/2014",
+      "sampleTextarea" => "Rick James",
+    }
     form = getform("simple.yaml").fill(params)
 
     expect(form).to be_a(FML::FMLForm)
-    expect(form.fieldsets[0][0].value).to eq "true"
+    expect(form.fieldsets[0][0].value).to eq "yes"
+    expect(form.fieldsets[0][1].value).to eq "1"
+    expect(form.fieldsets[0][2].value).to eq "01/01/2014"
+    expect(form.fieldsets[0][3].value).to eq "Rick James"
   end
 
   it "can export itself as json" do
-    params = {"hasDiabetes" => "true"}
+    params = {
+      "hasDiabetes" => "yes",
+      "sampleCheckbox" => "1",
+      "sampleDate" => "01/01/2014",
+      "sampleTextarea" => "Rick James",
+    }
     json = getform("simple.yaml").fill(params).to_json
 
     expect(json).to be_a(String)
@@ -71,11 +84,16 @@ describe FML::FMLForm do
     expect(field["fieldType"]).to eq "yes_no"
     expect(field["label"]).to eq "bananarama"
     expect(field["isRequired"]).to eq true
-    expect(field["value"]).to eq "true"
+    expect(field["value"]).to eq "yes"
   end
 
   it "can load itself from json" do
-    params = {"hasDiabetes" => "true"}
+    params = {
+      "hasDiabetes" => "yes",
+      "sampleCheckbox" => "1",
+      "sampleDate" => "01/01/2014",
+      "sampleTextarea" => "Rick James",
+    }
     json = getform("simple.yaml").fill(params).to_json
 
     f = FML::FMLForm.from_json(json)
@@ -141,10 +159,27 @@ describe FML::FMLForm do
     rescue FML::ValidationErrors => e
       expect(e.message).to eq "Expected DependsOnRoot:\"bananas\" to be nil because it depends on RootQ:nil which is nil \nExpected Tertiary:nil to be non-nil because it depends on DependsOnRoot:\"bananas\" which is non-nil \n"
       expect(e.errors.length).to eq 2
-      expect(e.errors[0].dependent_field_name).to eq "DependsOnRoot"
-      expect(e.errors[0].depends_on_field_name).to eq "RootQ"
-      expect(e.errors[1].dependent_field_name).to eq "Tertiary"
-      expect(e.errors[1].depends_on_field_name).to eq "DependsOnRoot"
+      expect(e.errors[0]).to be_a FML::DependencyError
+      expect(e.errors[1]).to be_a FML::DependencyError
+      expect(e.errors[0].field_name).to eq "DependsOnRoot"
+      expect(e.errors[0].depends_on).to eq "RootQ"
+      expect(e.errors[1].field_name).to eq "Tertiary"
+      expect(e.errors[1].depends_on).to eq "DependsOnRoot"
+    end
+  end
+
+  it "requires required fields" do
+    form = getform("required.yaml")
+    params = {
+      "notrequired" => "bananas",
+    }
+
+    expect {form.fill(params)}.to raise_exception FML::ValidationErrors
+    begin
+      form.fill({})
+    rescue FML::ValidationErrors => e
+      expect(e.errors.length).to eq 1
+      expect(e.message).to eq "Field \"required\" is required\n"
     end
   end
 
