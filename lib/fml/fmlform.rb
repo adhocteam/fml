@@ -11,7 +11,13 @@ module FML
       # fields that depend on it.
       @conditional = Hash.new{|h, k| h[k] = []}
 
-      parse(YAML.load(form))
+      begin
+        parse(YAML.load(form))
+      rescue Psych::SyntaxError => e
+        raise FML::InvalidSpec.new(<<-EOM)
+Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
+        EOM
+      end
     end
 
     def fill(params)
@@ -105,10 +111,18 @@ Expected #{dep.name}:#{dep.value.inspect} to be #{err} because it depends on #{f
     def parsefield(field)
       name = getrequired(field, "name")
 
+      # names must be valid HTML 4 ids:
+      #   ID and NAME tokens must begin with a letter ([A-Za-z]) and may be
+      #   followed by any number of letters, digits ([0-9]), hyphens ("-"),
+      #   underscores ("_"), colons (":"), and periods (".").
+      if name.match(/^[A-Za-z][A-Za-z\-_:\.]*$/).nil?
+        raise InvalidSpec.new("Invalid field name #{name.inspect} in form field #{field}")
+      end
+
       type = getrequired(field, "fieldType")
       validtypes = ["string", "text", "select", "multi-select", "yes_no", "boolean", "date", "time", "checkbox"]
       if validtypes.index(type).nil?
-        raise InvalidSpec.new("Invalid field type #{type} in form field #{field}")
+        raise InvalidSpec.new("Invalid field type #{type.inspect} in form field #{field}")
       end
 
       label = getrequired(field, "label")

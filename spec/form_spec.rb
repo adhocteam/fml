@@ -107,7 +107,7 @@ describe FML::FMLForm do
     begin
       getform("invalid_field_type.yaml")
     rescue FML::InvalidSpec => e
-      expect(e.message).to eq "Invalid field type notavalidtype in form field {\"name\"=>\"hasDiabetes\", \"fieldType\"=>\"notavalidtype\", \"label\"=>\"bananarama\", \"isRequired\"=>true}"
+      expect(e.message).to eq "Invalid field type \"notavalidtype\" in form field {\"name\"=>\"hasDiabetes\", \"fieldType\"=>\"notavalidtype\", \"label\"=>\"bananarama\", \"isRequired\"=>true}"
     end
   end
 
@@ -140,6 +140,31 @@ describe FML::FMLForm do
       form.fill({})
     rescue FML::ValidationErrors => e
       expect(e.message).to eq "Expected DependsOnRoot:\"bananas\" to be nil because it depends on RootQ:nil which is nil \nExpected Tertiary:nil to be non-nil because it depends on DependsOnRoot:\"bananas\" which is non-nil \n"
+    end
+  end
+
+  it "raises InvalidSpec on invalid names" do
+    yaml = YAML.load(getdata("simple.yaml"))
+    invalid_names = [".something", "_", "Some$thing", "sp ace"]
+    invalid_names.each do |name|
+      yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["name"] = name
+      expect {FML::FMLForm.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
+    end
+
+    valid_names = ["Something", "MiXeD", "da-sh", "why.dot", "un_der"]
+    valid_names.each do |name|
+      yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["name"] = name
+      expect(FML::FMLForm.new(yaml.to_yaml)).to be_a FML::FMLForm
+    end
+  end
+
+  it "raises InvalidSpec on invalid YAML" do
+    expect {FML::FMLForm.new('--- `')}.to raise_exception FML::InvalidSpec
+
+    begin
+      FML::FMLForm.new('--- `')
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq "Invalid YAML. 1:5:found character that cannot start any token while scanning for the next token\n"
     end
   end
 
