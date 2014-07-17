@@ -79,7 +79,7 @@ JSON parser raised an error:
         dependents.each do |dep|
           dep = @fields[dep]
           if dep.value.nil? != isnil
-            errors << ValidationError.new(<<-EOM)
+            errors << ValidationError.new(<<-EOM, dep.name, field.name)
 Expected #{dep.name}:#{dep.value.inspect} to be #{err} because it depends on #{field.name}:#{field.value.inspect} which is #{err} 
             EOM
           end
@@ -170,14 +170,19 @@ has the same name as: #{@fields[name].to_s}
   end
 
   class ValidationError<Exception
+    attr :dependent_field_name, :depends_on_field_name
+    def initialize(message, dependent_field_name, depends_on_field_name)
+      super(message)
+      @dependent_field_name = dependent_field_name
+      @depends_on_field_name = depends_on_field_name
+    end
   end
 
   # a container for ValidationError instances found by #validate
   class ValidationErrors<Exception
     attr :errors
     def initialize(errors)
-      message = errors.collect{ |e| e.message }.join("")
-      super(message)
+      super(errors.collect{ |e| e.message }.join(""))
       @errors = errors
     end
   end
