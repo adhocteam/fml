@@ -131,6 +131,18 @@ describe FML::FMLForm do
     end
   end
 
+  it "handles conditional fields" do
+    form = getform("conditional.yaml")
+
+    expect {form.fill({"DependsOnRoot" => "bananas"})}.to raise_exception FML::ValidationErrors
+
+    begin
+      form.fill({})
+    rescue FML::ValidationErrors => e
+      expect(e.message).to eq "Expected DependsOnRoot:\"bananas\" to be nil because it depends on RootQ:nil which is nil \nExpected Tertiary:nil to be non-nil because it depends on DependsOnRoot:\"bananas\" which is non-nil \n"
+    end
+  end
+
   private
 
   def getdata(name)

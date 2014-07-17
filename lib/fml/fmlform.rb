@@ -3,7 +3,14 @@ module FML
     attr_reader :form, :title, :version, :fieldsets, :fields
 
     def initialize(form)
+      # @fields stores the fields from all fieldsets by name. Helps ensure that
+      # we don't reuse names
       @fields = {}
+
+      # @conditional stores the field dependencies. Each key is an array of the
+      # fields that depend on it.
+      @conditional = Hash.new{|h, k| h[k] = []}
+
       parse(YAML.load(form))
     end
 
@@ -13,7 +20,7 @@ module FML
           @fields[field].value = params[field]
         end
       end
-      self
+      validate
     end
 
     def to_json
@@ -50,6 +57,38 @@ JSON parser raised an error:
 
     private
 
+    # validate ensures that all fields pass their validations and that all
+    # dependencies are satisfied.
+    #
+    # Returns self if successful, throws FML::InvalidSpec if not
+    def validate
+      errors = []
+
+      # check conditional fields
+      @conditional.each do |field, dependents|
+        field = @fields[field]
+        isnil = field.value.nil?
+        err = isnil ? "nil" : "non-nil"
+
+        dependents.each do |dep|
+          dep = @fields[dep]
+          if dep.value.nil? != isnil
+            errors << ValidationError.new(<<-EOM)
+Expected #{dep.name}:#{dep.value.inspect} to be #{err} because it depends on #{field.name}:#{field.value.inspect} which is #{err} 
+            EOM
+          end
+        end
+      end
+
+      # TODO: check validations
+
+      if !errors.empty?
+        raise ValidationErrors.new(errors)
+      end
+
+      self
+    end
+
     def parse(yaml)
       @form = getrequired(yaml, "form")
       @title = getrequired(@form, "title")
@@ -76,9 +115,14 @@ JSON parser raised an error:
       prompt = field["prompt"]
       is_required = field["isRequired"]
 
-      #TODO: actually handle the things below this point
       options = field["options"]
+
+      # if field is conditional on another field, store the dependency
       conditional = field["conditionalOn"]
+      if !conditional.nil?
+        @conditional[conditional] << name
+      end
+
       validations = field["validations"]
       value = field["value"]
 
@@ -108,6 +152,19 @@ has the same name as: #{@fields[name].to_s}
         raise InvalidSpec.new("Could not find required `#{attr}` attribute in #{obj}")
       end
       x
+    end
+  end
+
+  class ValidationError<Exception
+  end
+
+  # a container for ValidationError instances found by #validate
+  class ValidationErrors<Exception
+    attr :errors
+    def initialize(errors)
+      message = errors.collect{ |e| e.message }.join("")
+      super(message)
+      @errors = errors
     end
   end
 

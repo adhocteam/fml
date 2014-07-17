@@ -1,0 +1,22 @@
+form:
+  title: "Conditional Test"
+  version: "1"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "RootQ"
+          fieldType: "yes_no"
+          label: "The Root Question"
+          isRequired: true
+      - field:
+          name: "DependsOnRoot"
+          fieldType: "text"
+          label: "Secondary"
+          isRequired: true
+          conditionalOn: "RootQ"
+      - field:
+          name: "Tertiary"
+          fieldType: "date"
+          label: "Depends on Secondary"
+          isRequired: true
+          conditionalOn: "DependsOnRoot"
