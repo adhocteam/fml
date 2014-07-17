@@ -2,7 +2,7 @@ require 'fml'
 
 describe FML::FMLForm do
   it "creates a form from a FML spec" do
-    form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
+    form = getdata("simple.yaml")
 
     f = FML::FMLForm.new(form)
     expect(f.title).to eq "Simple sample form"
@@ -37,7 +37,7 @@ describe FML::FMLForm do
   end
 
   it "preserves the value" do
-    form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
+    form = getdata("simple.yaml")
 
     # Add the "value" attribute to hasDiabetes and give it "true"
     y = YAML.load(form)
@@ -48,22 +48,16 @@ describe FML::FMLForm do
   end
 
   it "can fill in a form" do
-    form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
-
-    f = FML::FMLForm.new(form)
     params = {"hasDiabetes" => "true"}
-    form = f.fill(params)
-    expect(f.fieldsets[0][0].value).to eq "true"
+    form = getform("simple.yaml").fill(params)
+
     expect(form).to be_a(FML::FMLForm)
+    expect(form.fieldsets[0][0].value).to eq "true"
   end
 
   it "can export itself as json" do
-    form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
-
-    f = FML::FMLForm.new(form)
     params = {"hasDiabetes" => "true"}
-    form = f.fill(params)
-    json = form.to_json
+    json = getform("simple.yaml").fill(params).to_json
 
     expect(json).to be_a(String)
     obj = JSON.parse(json)
@@ -81,11 +75,8 @@ describe FML::FMLForm do
   end
 
   it "can load itself from json" do
-    form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
-
     params = {"hasDiabetes" => "true"}
-    form = FML::FMLForm.new(form).fill(params)
-    json = form.to_json
+    json = getform("simple.yaml").fill(params).to_json
 
     f = FML::FMLForm.from_json(json)
     expect(f.title).to eq "Simple sample form"
@@ -102,6 +93,7 @@ describe FML::FMLForm do
 
   it "raises an InvalidSpec error on invalid json" do
     expect {FML::FMLForm.from_json("{\ninvalid json")}.to raise_exception FML::InvalidSpec
+
     begin
       FML::FMLForm.from_json("{\ninvalid json")
     rescue FML::InvalidSpec => e
@@ -110,35 +102,42 @@ describe FML::FMLForm do
   end
 
   it "raises an InvalidSpec error on an invalid field type" do
-    form = File.read(File.join(File.dirname(__FILE__), "data", "invalid_field_type.yaml"))
+    expect {getform("invalid_field_type.yaml")}.to raise_exception FML::InvalidSpec
 
-    expect {FML::FMLForm.new(form)}.to raise_exception FML::InvalidSpec
     begin
-      FML::FMLForm.new(form)
+      getform("invalid_field_type.yaml")
     rescue FML::InvalidSpec => e
       expect(e.message).to eq "Invalid field type notavalidtype in form field {\"name\"=>\"hasDiabetes\", \"fieldType\"=>\"notavalidtype\", \"label\"=>\"bananarama\", \"isRequired\"=>true}"
     end
   end
 
   it "raises an InvalidSpec error on a missing required field" do
-    form = File.read(File.join(File.dirname(__FILE__), "data", "missing_name.yaml"))
+    expect {getform("missing_name.yaml")}.to raise_exception FML::InvalidSpec
 
-    expect {FML::FMLForm.new(form)}.to raise_exception FML::InvalidSpec
     begin
-      FML::FMLForm.new(form)
+      getform("missing_name.yaml")
     rescue FML::InvalidSpec => e
       expect(e.message).to eq "Could not find required `name` attribute in {\"fieldType\"=>\"checkbox\", \"label\"=>\"bananarama\", \"isRequired\"=>true}"
     end
   end
 
   it "raises an error if the spec has a duplicate name" do
-    form = File.read(File.join(File.dirname(__FILE__), "data", "duplicate_name.yaml"))
+    expect {getform("duplicate_name.yaml")}.to raise_exception FML::InvalidSpec
 
-    expect {FML::FMLForm.new(form)}.to raise_exception FML::InvalidSpec
     begin
-      FML::FMLForm.new(form)
+      getform("duplicate_name.yaml")
     rescue FML::InvalidSpec => e
       expect(e.message).to eq "Duplicate field name name.\nThis field: {:name=>\"name\", :fieldType=>\"yes_no\", :label=>\"gooseegg\", :prompt=>nil, :isRequired=>false, :options=>nil, :conditionalOn=>nil, :validations=>nil, :value=>nil}\nhas the same name as: {:name=>\"name\", :fieldType=>\"checkbox\", :label=>\"bananarama\", :prompt=>nil, :isRequired=>true, :options=>nil, :conditionalOn=>nil, :validations=>nil, :value=>nil}\n"
     end
+  end
+
+  private
+
+  def getdata(name)
+    File.read(File.join(File.dirname(__FILE__), "data", name))
+  end
+
+  def getform(name)
+    FML::FMLForm.new(getdata(name))
   end
 end
