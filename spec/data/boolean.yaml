@@ -1,0 +1,17 @@
+form:
+  title: "Bool test"
+  version: "1"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "checkbox"
+          fieldType: "checkbox"
+          label: ""
+      - field:
+          name: "yesno"
+          fieldType: "yes_no"
+          label: ""
+      - field:
+          name: "leavemenil"
+          fieldType: "checkbox"
+          label: ""

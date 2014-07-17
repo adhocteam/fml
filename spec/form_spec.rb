@@ -41,24 +41,24 @@ describe FML::FMLForm do
 
     # Add the "value" attribute to hasDiabetes and give it "yes"
     y = YAML.load(form)
-    y["form"]["fieldsets"][0]["fieldset"][0]["field"]["value"] = "yes"
+    y["form"]["fieldsets"][0]["fieldset"][3]["field"]["value"] = "bananas"
 
     f = FML::FMLForm.new(y.to_yaml)
-    expect(f.fieldsets[0][0].value).to eq "yes"
+    expect(f.fieldsets[0][3].value).to eq "bananas"
   end
 
   it "can fill in a form" do
     params = {
       "hasDiabetes" => "yes",
-      "sampleCheckbox" => "1",
+      "sampleCheckbox" => "0",
       "sampleDate" => "01/01/2014",
       "sampleTextarea" => "Rick James",
     }
     form = getform("simple.yaml").fill(params)
 
     expect(form).to be_a(FML::FMLForm)
-    expect(form.fieldsets[0][0].value).to eq "yes"
-    expect(form.fieldsets[0][1].value).to eq "1"
+    expect(form.fieldsets[0][0].value).to eq true
+    expect(form.fieldsets[0][1].value).to eq false
     expect(form.fieldsets[0][2].value).to eq "01/01/2014"
     expect(form.fieldsets[0][3].value).to eq "Rick James"
   end
@@ -84,7 +84,7 @@ describe FML::FMLForm do
     expect(field["fieldType"]).to eq "yes_no"
     expect(field["label"]).to eq "bananarama"
     expect(field["isRequired"]).to eq true
-    expect(field["value"]).to eq "yes"
+    expect(field["value"]).to eq true
   end
 
   it "can load itself from json" do
@@ -107,6 +107,8 @@ describe FML::FMLForm do
     expect(field.type).to eq "yes_no"
     expect(field.label).to eq "bananarama"
     expect(field.required).to eq true
+
+    expect(f.fields["sampleCheckbox"].value).to eq true
   end
 
   it "raises an InvalidSpec error on invalid json" do
@@ -206,6 +208,18 @@ describe FML::FMLForm do
     rescue FML::InvalidSpec => e
       expect(e.message).to eq "Invalid YAML. 1:5:found character that cannot start any token while scanning for the next token\n"
     end
+  end
+
+  it "gives a boolean value to yes_no or checkbox fields" do
+    params = {
+      "checkbox" => "1",
+      "yesno" => "no",
+    }
+
+    form = getform("boolean.yaml").fill(params)
+    expect(form.fields["checkbox"].value).to eq true
+    expect(form.fields["yesno"].value).to eq false
+    expect(form.fields["leavemenil"].value).to eq nil
   end
 
   private

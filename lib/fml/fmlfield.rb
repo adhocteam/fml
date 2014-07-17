@@ -15,7 +15,24 @@ module FML
       @options = options
       @conditional_on = conditional_on
       @validations = validations
-      @value = value
+      self.value = value
+    end
+
+    def value=(value)
+      # Convert value to boolean if a checkbox or yes_no field and value is
+      # non-nil
+      #
+      # XXX: convert this to a strategy pattern if we start having more custom
+      #      data conversion for different types
+      if value.nil? || ["checkbox", "yes_no"].index(@type).nil?
+        @value = value
+      else
+        if ["1", "true", "yes", true].index(value).nil?
+          @value = false
+        else
+          @value = true
+        end
+      end
     end
 
     def to_h
