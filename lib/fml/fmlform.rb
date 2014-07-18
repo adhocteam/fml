@@ -79,22 +79,6 @@ Field #{name.inspect} is required
         end
       end
 
-      # check conditional fields
-      @conditional.each do |field, dependents|
-        field = @fields[field]
-        isnil = field.value.nil?
-        err = isnil ? "nil" : "non-nil"
-
-        dependents.each do |dep|
-          dep = @fields[dep]
-          if dep.value.nil? != isnil
-            errors << DependencyError.new(<<-EOM, dep.name, field.name)
-Expected #{dep.name}:#{dep.value.inspect} to be #{err} because it depends on #{field.name}:#{field.value.inspect} which is #{err} 
-            EOM
-          end
-        end
-      end
-
       # TODO: check validations
 
       if !errors.empty?
