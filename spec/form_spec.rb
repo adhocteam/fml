@@ -159,7 +159,7 @@ describe FML::FMLForm do
     begin
       form.fill({})
     rescue FML::ValidationErrors => e
-      expect(e.message).to eq "Expected DependsOnRoot:\"bananas\" to be nil because it depends on RootQ:nil which is nil \nExpected Tertiary:nil to be non-nil because it depends on DependsOnRoot:\"bananas\" which is non-nil \n"
+      expect(e.message).to eq "Expected DependsOnRoot:false to be nil because it depends on RootQ:nil which is nil \nExpected Tertiary:nil to be non-nil because it depends on DependsOnRoot:false which is non-nil \n"
       expect(e.errors.length).to eq 2
       expect(e.errors[0]).to be_a FML::DependencyError
       expect(e.errors[1]).to be_a FML::DependencyError

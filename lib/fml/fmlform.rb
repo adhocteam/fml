@@ -115,6 +115,18 @@ Expected #{dep.name}:#{dep.value.inspect} to be #{err} because it depends on #{f
           parsefield(field["field"])
         end
       end
+
+      # verify that the type of each field that is depended upon
+      # is checkbox or yes_no
+      @conditional.each do |conditional,dependents|
+        if ["yes_no", "checkbox"].index(@fields[conditional].type).nil?
+          raise InvalidSpec.new(<<-EOM)
+Fields #{dependents.inspect} depend on field #{conditional}, which is not a boolean.
+Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
+#{@fields[conditional].type.inspect} field.
+          EOM
+        end
+      end
     end
 
     def parsefield(field)
