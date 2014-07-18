@@ -2,6 +2,11 @@ module FML
   class FMLForm
     attr_reader :form, :title, :version, :fieldsets, :fields
 
+    @@validation_classes = {
+      "requiredIf" => FML::RequiredIfValidation,
+      "minLength" => FML::MinLengthValidation,
+    }
+
     def initialize(form)
       # @fields stores the fields from all fieldsets by name. Helps ensure that
       # we don't reuse names
@@ -10,6 +15,8 @@ module FML
       # @conditional stores the field dependencies. Each key is an array of the
       # fields that depend on it.
       @conditional = Hash.new{|h, k| h[k] = []}
+
+      @validations = []
 
       begin
         parse(YAML.load(form))
@@ -79,7 +86,13 @@ Field #{name.inspect} is required
         end
       end
 
-      # TODO: check validations
+      @validations.each do |validation|
+        begin
+          validation.validate
+        rescue ValidationError => e
+          errors << e
+        end
+      end
 
       if !errors.empty?
         raise ValidationErrors.new(errors)
@@ -109,6 +122,18 @@ Fields #{dependents.inspect} depend on field #{conditional}, which is not a bool
 Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
 #{@fields[conditional].type.inspect} field.
           EOM
+        end
+      end
+
+      # for each field, if it has validations, create the appropriate class
+      @fields.values.reject {|f| f.validations.nil?}.each do |field|
+        field.validations.each do |validation|
+          # validation is a hash {<<validation>>: <<data>>}. Split it
+          validation, data = validation.to_a.first
+          if !@@validation_classes.has_key? validation
+            raise InvalidSpec.new("No such validation #{validation.inspect}")
+          end
+          @validations << @@validation_classes[validation].new(field, data, self)
         end
       end
     end

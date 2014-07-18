@@ -1,0 +1,11 @@
+form:
+  title: "Validation Test"
+  version: "1"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "root"
+          fieldType: "checkbox"
+          label: "The Root Question"
+          validations:
+            - ThisValidationNameDefinitelyDoesNotExist: 10

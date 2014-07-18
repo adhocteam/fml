@@ -19,12 +19,16 @@ form:
           label: "Date"
           isRequired: false
           conditionalOn: "fastingPlasmaGlucoseTest"
+          validations:
+            - requiredIf: "fastingPlasmaGlucoseTest"
       - field:
           name: "fastingPlasmaGlucoseOccurence2"
           fieldType: "date"
           label: "Date"
           isRequired: false
           conditionalOn: "fastingPlasmaGlucoseTest"
+          validations:
+            - requiredIf: "fastingPlasmaGlucoseTest"
       - field:
           name: "a1cPercent"
           fieldType: "checkbox"

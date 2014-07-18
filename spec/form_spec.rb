@@ -215,6 +215,34 @@ describe FML::FMLForm do
     end
   end
 
+  it "raises InvalidSpec on an invalid validation name" do
+    expect {getform("invalid_validation.yaml")}.to raise_exception FML::InvalidSpec
+  end
+
+  it "raises a ValidationErrors when there is a validation error" do
+    # expect no errors on valid input, no input
+    params = {"root" => "true", "requiredIfRoot" => "something valid"}
+    getform("validation.yaml").fill(params)
+    getform("validation.yaml").fill({})
+
+    params = {"root" => "true"}
+    expect {getform("validation.yaml").fill(params)}.to raise_exception FML::ValidationErrors
+
+    begin
+      getform("validation.yaml").fill(params)
+    rescue FML::ValidationErrors => e
+      expect(e.message).to eq "Field requiredIfRoot:nil must be present when root:true is\n"
+    end
+
+    params = {"root" => "true", "requiredIfRoot" => "tooshort"}
+    expect {getform("validation.yaml").fill(params)}.to raise_exception FML::ValidationErrors
+    begin
+      getform("validation.yaml").fill(params)
+    rescue FML::ValidationErrors => e
+      expect(e.message).to eq "Field requiredIfRoot:\"tooshort\" must be longer than 10 characters\n"
+    end
+  end
+
   private
 
   def getdata(name)
