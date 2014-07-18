@@ -203,6 +203,18 @@ describe FML::FMLForm do
     expect(form.fields["leavemenil"].value).to eq nil
   end
 
+  it "raises an error for fields that are conditional upon non-yes_no or checkbox fields" do
+    yaml = YAML.load(getdata("conditional.yaml"))
+    yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["fieldType"] = "text"
+    expect {FML::FMLForm.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
+
+    begin
+      FML::FMLForm.new(yaml.to_yaml)
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq "Fields [\"DependsOnRoot\"] depend on field RootQ, which is not a boolean.\nFields may only depend on \"yes_no\" or \"checkbox\" fields, but RootQ is a\n\"text\" field.\n"
+    end
+  end
+
   private
 
   def getdata(name)
