@@ -145,7 +145,7 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
       #   ID and NAME tokens must begin with a letter ([A-Za-z]) and may be
       #   followed by any number of letters, digits ([0-9]), hyphens ("-"),
       #   underscores ("_"), colons (":"), and periods (".").
-      if name.match(/^[A-Za-z][A-Za-z\-_:\.]*$/).nil?
+      if name.match(/^[A-Za-z][A-Za-z0-9\-_:\.]*$/).nil?
         raise InvalidSpec.new("Invalid field name #{name.inspect} in form field #{field}")
       end
 

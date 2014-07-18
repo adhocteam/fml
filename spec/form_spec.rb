@@ -174,7 +174,7 @@ describe FML::FMLForm do
       expect {FML::FMLForm.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
     end
 
-    valid_names = ["Something", "MiXeD", "da-sh", "why.dot", "un_der"]
+    valid_names = ["Something", "MiXeD", "da-sh", "why.dot", "un_der", "l33t"]
     valid_names.each do |name|
       yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["name"] = name
       expect(FML::FMLForm.new(yaml.to_yaml)).to be_a FML::FMLForm
