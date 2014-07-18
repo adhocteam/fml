@@ -129,7 +129,7 @@ Expected #{dep.name}:#{dep.value.inspect} to be #{err} because it depends on #{f
       end
 
       type = getrequired(field, "fieldType")
-      validtypes = ["string", "text", "select", "multi-select", "yes_no", "boolean", "date", "time", "checkbox"]
+      validtypes = ["string", "text", "select", "multi-select", "yes_no", "date", "time", "checkbox"]
       if validtypes.index(type).nil?
         raise InvalidSpec.new("Invalid field type #{type.inspect} in form field #{field}")
       end
