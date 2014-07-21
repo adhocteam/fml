@@ -205,6 +205,10 @@ has the same name as: #{@fields[name].to_s}
   class ValidationError<Exception
     attr :field_name
     def initialize(message, field_name)
+      if !message.end_with? "\n"
+        message += "\n"
+      end
+
       super(message)
       @field_name = field_name
     end
