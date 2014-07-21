@@ -241,6 +241,18 @@ describe FML::FMLForm do
     rescue FML::ValidationErrors => e
       expect(e.message).to eq "Field requiredIfRoot:\"tooshort\" must be longer than 10 characters\n"
     end
+
+    # We had a bug where the empty string was the value for a blank text field,
+    # which therefore passed the requiredIf validation. Ensure that a blank
+    # text field does not pass a requiredIf. (validation2.yaml has no minLength
+    # validation)
+    params = {"root" => "true", "requiredIfRoot" => ""}
+    expect {getform("validation2.yaml").fill(params)}.to raise_exception FML::ValidationErrors
+    begin
+      getform("validation2.yaml").fill(params)
+    rescue FML::ValidationErrors => e
+      expect(e.message).to eq "Field requiredIfRoot:\"\" must be present when root:true is\n"
+    end
   end
 
   it "parses a Date" do

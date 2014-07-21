@@ -36,8 +36,9 @@ module FML
     end
 
     def validate
-      # if parent is true, child must be truthy (is that the right semantics?)
-      if @parent.value && !@child.value
+      # if parent is true and not empty, child must be truthy (is that the right semantics?)
+      # XXX: should move this logic into the FmlField object?
+      if @parent.value && @parent.value != "" && (!@child.value || @child.value == "")
         raise DependencyError.new(<<-EOM, @child.name, @parent.name)
 Field #{@child.name}:#{@child.value.inspect} must be present when #{@parent.name}:#{@parent.value.inspect} is
         EOM
