@@ -59,7 +59,7 @@ describe FML::FMLForm do
     expect(form).to be_a(FML::FMLForm)
     expect(form.fieldsets[0][0].value).to eq true
     expect(form.fieldsets[0][1].value).to eq false
-    expect(form.fieldsets[0][2].value).to eq "01/01/2014"
+    expect(form.fieldsets[0][2].value.iso8601).to eq "2014-01-01"
     expect(form.fieldsets[0][3].value).to eq "Rick James"
   end
 
@@ -240,6 +240,27 @@ describe FML::FMLForm do
       getform("validation.yaml").fill(params)
     rescue FML::ValidationErrors => e
       expect(e.message).to eq "Field requiredIfRoot:\"tooshort\" must be longer than 10 characters\n"
+    end
+  end
+
+  it "parses a Date" do
+    params = {
+      "hasDiabetes" => "yes",
+      "sampleCheckbox" => "0",
+      "sampleDate" => "01/01/2014",
+      "sampleTextarea" => "Rick James",
+    }
+    form = getform("simple.yaml").fill(params)
+
+    expect(form.fieldsets[0][2].value.iso8601).to eq "2014-01-01"
+
+    params["sampleDate"] = "invalid date"
+    expect {getform("simple.yaml").fill(params)}.to raise_exception FML::ValidationErrors
+
+    begin
+      getform("simple.yaml").fill(params)
+    rescue FML::ValidationErrors => e
+      expect(e.message).to eq "Invalid date \"invalid date\"Field \"sampleDate\" is required\n"
     end
   end
 

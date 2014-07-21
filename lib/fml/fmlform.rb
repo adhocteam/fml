@@ -27,13 +27,47 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
       end
     end
 
+    # fill ensures that all fields pass their validations and that all
+    # dependencies are satisfied.
+    #
+    # Returns self if successful, throws FML::InvalidSpec if not
     def fill(params)
+      errors = []
+
+      # update each field's value
       params.each do |field, value|
         if @fields.has_key? field
-          @fields[field].value = params[field]
+          begin
+            @fields[field].value = params[field]
+          rescue ValidationError => e
+            errors << e
+          end
         end
       end
-      validate
+
+      # check required fields
+      @fields.each do |name,field|
+        if field.required && field.value.nil?
+          errors << ValidationError.new(<<-EOM, field.name)
+Field #{name.inspect} is required
+          EOM
+        end
+      end
+
+      # run the validations
+      @validations.each do |validation|
+        begin
+          validation.validate
+        rescue ValidationError => e
+          errors << e
+        end
+      end
+
+      if !errors.empty?
+        raise ValidationErrors.new(errors)
+      end
+
+      self
     end
 
     def to_json
@@ -69,37 +103,6 @@ JSON parser raised an error:
     end
 
     private
-
-    # validate ensures that all fields pass their validations and that all
-    # dependencies are satisfied.
-    #
-    # Returns self if successful, throws FML::InvalidSpec if not
-    def validate
-      errors = []
-
-      # check required fields
-      @fields.each do |name,field|
-        if field.required && field.value.nil?
-          errors << ValidationError.new(<<-EOM, field.name)
-Field #{name.inspect} is required
-          EOM
-        end
-      end
-
-      @validations.each do |validation|
-        begin
-          validation.validate
-        rescue ValidationError => e
-          errors << e
-        end
-      end
-
-      if !errors.empty?
-        raise ValidationErrors.new(errors)
-      end
-
-      self
-    end
 
     def parse(yaml)
       @form = getrequired(yaml, "form")

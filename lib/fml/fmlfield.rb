@@ -24,15 +24,23 @@ module FML
       #
       # XXX: convert this to a strategy pattern if we start having more custom
       #      data conversion for different types
-      if value.nil? || ["checkbox", "yes_no"].index(@type).nil?
-        @value = value
-      else
-        if ["1", "true", "yes", true].index(value).nil?
-          @value = false
-        else
-          @value = true
+      if !value.nil?
+        if @type == "checkbox" || @type == "yes_no"
+          if ["1", "true", "yes", true].index(value).nil?
+            value = false
+          else
+            value = true
+          end
+        elsif @type == "date"
+          begin
+            value = Date.parse(value)
+          rescue ArgumentError
+            raise ValidationError.new("Invalid date #{value.inspect}", @name)
+          end
         end
       end
+
+      @value = value
     end
 
     def to_h
