@@ -1,0 +1,15 @@
+form:
+  title: "Validation Test"
+  version: "1"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "root"
+          fieldType: "checkbox"
+          label: "The Root Question"
+      - field:
+          name: "requiredIfRoot"
+          fieldType: "text"
+          label: "Dependent"
+          validations:
+            - requiredIf: root
