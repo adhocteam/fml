@@ -11,7 +11,7 @@ module FML
       @type = type
       @label = label
       @prompt = prompt
-      @required = required
+      self.required = required
       @options = options
       @conditional_on = conditional_on
       @validations = validations
@@ -32,15 +32,36 @@ module FML
             value = true
           end
         elsif @type == "date"
-          begin
-            value = Date.parse(value)
-          rescue ArgumentError
-            raise ValidationError.new("Invalid date #{value.inspect}", @name)
+          # empty date fields have "" as their value. Don't try to parse it,
+          # just set them to nil
+          if value == ""
+            value = nil
+          else
+            begin
+              value = Date.parse(value)
+            rescue ArgumentError
+              raise ValidationError.new(<<-EOM, @name)
+Invalid date #{value.inspect} for field #{@name.inspect}
+              EOM
+            end
           end
         end
       end
 
       @value = value
+    end
+
+    def required=(value)
+      # set @required to a boolean value
+      #
+      # anything falsy -> false
+      # "false" in any case -> false
+      # anything else -> true
+      if !value || (value.is_a?(String) && value.downcase == "false")
+        @required = false
+      else
+        @required = true
+      end
     end
 
     def to_h

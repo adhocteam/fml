@@ -255,6 +255,29 @@ describe FML::FMLForm do
     end
   end
 
+  it "must accept \"\" as a valid date field value" do
+    params = {
+      "hasDiabetes" => "yes",
+      "sampleCheckbox" => "1",
+      "sampleDate" => "",
+      "sampleTextarea" => "Rick James",
+    }
+    yaml = YAML.load(getdata("simple.yaml"))
+    yaml["form"]["fieldsets"][0]["fieldset"][2]["field"]["isRequired"] = "false"
+    json = FML::FMLForm.new(yaml.to_yaml).fill(params).to_json
+  end
+
+  it "should not require a field with isRequired of false" do
+    params = {
+      "sampleCheckbox" => "1",
+      "sampleDate" => "10.10.2014",
+      "sampleTextarea" => "Rick James",
+    }
+    yaml = YAML.load(getdata("simple.yaml"))
+    yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["isRequired"] = "false"
+    json = FML::FMLForm.new(yaml.to_yaml).fill(params).to_json
+  end
+
   it "parses a Date" do
     params = {
       "hasDiabetes" => "yes",
@@ -272,7 +295,7 @@ describe FML::FMLForm do
     begin
       getform("simple.yaml").fill(params)
     rescue FML::ValidationErrors => e
-      expect(e.message).to eq "Invalid date \"invalid date\"Field \"sampleDate\" is required\n"
+      expect(e.message).to eq "Invalid date \"invalid date\" for field \"sampleDate\"\nField \"sampleDate\" is required\n"
     end
   end
 
