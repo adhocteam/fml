@@ -1,0 +1,20 @@
+form:
+  title: "Simple sample form"
+  version: "1.0"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "date1"
+          fieldType: "date"
+          label: ""
+          format: "%d.%m.%Y"
+      - field:
+          name: "date2"
+          fieldType: "date"
+          label: ""
+          format: "%Y-%m-%d"
+      - field:
+          name: "date3"
+          fieldType: "date"
+          label: ""
+          format: "%m/%d/%Y"
