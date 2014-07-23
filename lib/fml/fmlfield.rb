@@ -21,9 +21,6 @@ module FML
     def value=(value)
       # Convert value to boolean if a checkbox or yes_no field and value is
       # non-nil
-      #
-      # XXX: convert this to a strategy pattern if we start having more custom
-      #      data conversion for different types
       if !value.nil?
         if @type == "checkbox" || @type == "yes_no"
           if ["1", "true", "yes", true].index(value).nil?
@@ -32,19 +29,6 @@ module FML
             value = true
           end
         elsif @type == "date"
-          # empty date fields have "" as their value. Don't try to parse it,
-          # just set them to nil
-          if value == ""
-            value = nil
-          else
-            begin
-              value = Date.parse(value)
-            rescue ArgumentError
-              raise ValidationError.new(<<-EOM, @name)
-Invalid date #{value.inspect} for field #{@name.inspect}
-              EOM
-            end
-          end
         end
       end
 
@@ -79,5 +63,49 @@ Invalid date #{value.inspect} for field #{@name.inspect}
 
     def inspect; self.to_h.to_s end
     def to_s; self.to_h.to_s end
+  end
+
+  class DateField<FMLField
+    def initialize(name, type, label, prompt, required, options, conditional_on,
+                  validations, value, format)
+      # defaults to month/day/year (American style)
+      @format = format || "%m/%d/%Y"
+
+      super(name, type, label, prompt, required, options, conditional_on,
+                  validations, value)
+    end
+
+    def to_h
+      val = @value ? @value.strftime(@format) : @value
+
+      {name: @name,
+       fieldType: @type,
+       label: @label,
+       prompt: @prompt,
+       isRequired: @required,
+       options: @options,
+       conditionalOn: @conditional_on,
+       validations: @validations,
+       value: val,
+       format: @format,
+      }
+    end
+
+    def value=(value)
+      # Date fields are text fields, so "" -> nil
+      if !value || value == ""
+        value = nil
+      else
+        begin
+          value = Date.strptime value, @format
+        rescue ArgumentError
+          raise ValidationError.new(<<-EOM, @name)
+Invalid date #{value.inspect} for field #{@name.inspect}, expected format #{@format.inspect}
+          EOM
+        end
+      end
+
+      @value = value
+    end
   end
 end

@@ -7,6 +7,16 @@ module FML
       "minLength" => FML::MinLengthValidation,
     }
 
+    @@field_classes = {
+      "text" => FMLField,
+      "select" => FMLField,
+      "multi-select" => FMLField,
+      "yes_no" => FMLField,
+      "date" => DateField,
+      "time" => FMLField,
+      "checkbox" => FMLField,
+    }
+
     def initialize(form)
       # @fields stores the fields from all fieldsets by name. Helps ensure that
       # we don't reuse names
@@ -153,7 +163,7 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
       end
 
       type = getrequired(field, "fieldType")
-      validtypes = ["string", "text", "select", "multi-select", "yes_no", "date", "time", "checkbox"]
+      validtypes = ["text", "select", "multi-select", "yes_no", "date", "time", "checkbox"]
       if validtypes.index(type).nil?
         raise InvalidSpec.new("Invalid field type #{type.inspect} in form field #{field}")
       end
@@ -173,8 +183,15 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
       validations = field["validations"]
       value = field["value"]
 
-      field = FMLField.new(name, type, label, prompt, is_required, options,
-                           conditional, validations, value)
+      if type != "date"
+        field = FMLField.new(name, type, label, prompt, is_required, options,
+                             conditional, validations, value)
+      else
+        format = field["format"]
+        field = DateField.new(name, type, label, prompt, is_required, options,
+                              conditional, validations, value, format)
+      end
+
 
       if @fields.has_key? name
         raise InvalidSpec.new(<<-ERR)

@@ -270,7 +270,7 @@ describe FML::FMLForm do
   it "should not require a field with isRequired of false" do
     params = {
       "sampleCheckbox" => "1",
-      "sampleDate" => "10.10.2014",
+      "sampleDate" => "10/10/2014",
       "sampleTextarea" => "Rick James",
     }
     yaml = YAML.load(getdata("simple.yaml"))
@@ -282,12 +282,12 @@ describe FML::FMLForm do
     params = {
       "hasDiabetes" => "yes",
       "sampleCheckbox" => "0",
-      "sampleDate" => "01/01/2014",
+      "sampleDate" => "09/22/2014",
       "sampleTextarea" => "Rick James",
     }
     form = getform("simple.yaml").fill(params)
 
-    expect(form.fieldsets[0][2].value.iso8601).to eq "2014-01-01"
+    expect(form.fieldsets[0][2].value.iso8601).to eq "2014-09-22"
 
     params["sampleDate"] = "invalid date"
     expect {getform("simple.yaml").fill(params)}.to raise_exception FML::ValidationErrors
@@ -295,8 +295,25 @@ describe FML::FMLForm do
     begin
       getform("simple.yaml").fill(params)
     rescue FML::ValidationErrors => e
-      expect(e.message).to eq "Invalid date \"invalid date\" for field \"sampleDate\"\nField \"sampleDate\" is required\n"
+      expect(e.message).to eq "Invalid date \"invalid date\" for field \"sampleDate\", expected format \"%m/%d/%Y\"\nField \"sampleDate\" is required\n"
     end
+  end
+
+  it "handles custom formats" do
+    params = {
+      "date1" => "22.09.1950",
+      "date2" => "1950-09-22",
+      "date3" => "09/22/1950",
+    }
+    form = getform("date.yaml").fill(params)
+
+    expect(form.fieldsets[0][0].value.iso8601).to eq "1950-09-22"
+    expect(form.fieldsets[0][1].value.iso8601).to eq "1950-09-22"
+    expect(form.fieldsets[0][2].value.iso8601).to eq "1950-09-22"
+
+    expect(form.fieldsets[0][0].to_h[:value]).to eq params["date1"]
+    expect(form.fieldsets[0][1].to_h[:value]).to eq params["date2"]
+    expect(form.fieldsets[0][2].to_h[:value]).to eq params["date3"]
   end
 
   private
