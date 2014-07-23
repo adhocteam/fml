@@ -147,7 +147,7 @@ describe FML::FMLForm do
     begin
       getform("duplicate_name.yaml")
     rescue FML::InvalidSpec => e
-      expect(e.message).to eq "Duplicate field name name.\nThis field: {:name=>\"name\", :fieldType=>\"yes_no\", :label=>\"gooseegg\", :prompt=>nil, :isRequired=>false, :options=>nil, :conditionalOn=>nil, :validations=>nil, :value=>nil}\nhas the same name as: {:name=>\"name\", :fieldType=>\"checkbox\", :label=>\"bananarama\", :prompt=>nil, :isRequired=>true, :options=>nil, :conditionalOn=>nil, :validations=>nil, :value=>nil}\n"
+      expect(e.message).to eq "Duplicate field name name.\nThis field: {:name=>\"name\", :fieldType=>\"yes_no\", :label=>\"gooseegg\"}\nhas the same name as: {:name=>\"name\", :fieldType=>\"checkbox\", :label=>\"bananarama\", :isRequired=>true}\n"
     end
   end
 
