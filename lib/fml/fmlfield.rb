@@ -3,7 +3,7 @@ module FML
     attr_reader :name, :type, :label, :prompt, :required, :options,
       :conditional_on, :validations
 
-    attr_accessor :value
+    attr_accessor :value, :errors
 
     def initialize(name, type, label, prompt, required, options, conditional_on,
                   validations, value)
@@ -16,6 +16,7 @@ module FML
       @conditional_on = conditional_on
       @validations = validations
       self.value = value
+      @errors = []
     end
 
     def value=(value)
@@ -70,46 +71,52 @@ module FML
   end
 
   class DateField<FMLField
+    attr_accessor :date
+
     def initialize(name, type, label, prompt, required, options, conditional_on,
                   validations, value, format)
       # defaults to month/day/year (American style)
       @format = format || "%m/%d/%Y"
+      @date = nil
 
       super(name, type, label, prompt, required, options, conditional_on,
                   validations, value)
     end
 
     def to_h
-      val = @value ? @value.strftime(@format) : @value
-
-      {name: @name,
-       fieldType: @type,
-       label: @label,
-       prompt: @prompt,
-       isRequired: @required,
-       options: @options,
-       conditionalOn: @conditional_on,
-       validations: @validations,
-       value: val,
-       format: @format,
+      h = {
+        name: @name,
+        fieldType: @type,
+        label: @label
       }
+
+      h[:prompt] = @prompt if @prompt
+      h[:isRequired] = @required if @required
+      h[:options] = @options if @options
+      h[:conditionalOn] = @conditional_on if @conditional_on
+      h[:validations] = @validations if @validations
+      h[:value] = @value if @value
+
+      h
     end
 
     def value=(value)
       # Date fields are text fields, so "" -> nil
       if !value || value == ""
-        value = nil
+        @value = nil
       else
+        # we want to save the value even if it doesn't parse; we still need
+        # to fill it in for the user
+        @value = value
+
         begin
-          value = Date.strptime value, @format
+          @date = Date.strptime value, @format
         rescue ArgumentError
           raise ValidationError.new(<<-EOM, @name)
 Invalid date #{value.inspect} for field #{@name.inspect}, expected format #{@format.inspect}
           EOM
         end
       end
-
-      @value = value
     end
   end
 end

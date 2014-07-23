@@ -50,6 +50,7 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
           begin
             @fields[field].value = params[field]
           rescue ValidationError => e
+            @fields[field].errors << e
             errors << e
           end
         end
@@ -58,9 +59,11 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
       # check required fields
       @fields.each do |name,field|
         if field.required && field.value.nil?
-          errors << ValidationError.new(<<-EOM, field.name)
+          e = ValidationError.new(<<-EOM, field.name)
 Field #{name.inspect} is required
           EOM
+          errors << e
+          field.errors << e
         end
       end
 

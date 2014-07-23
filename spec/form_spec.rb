@@ -59,7 +59,7 @@ describe FML::FMLForm do
     expect(form).to be_a(FML::FMLForm)
     expect(form.fieldsets[0][0].value).to eq true
     expect(form.fieldsets[0][1].value).to eq false
-    expect(form.fieldsets[0][2].value.iso8601).to eq "2014-01-01"
+    expect(form.fieldsets[0][2].date.iso8601).to eq "2014-01-01"
     expect(form.fieldsets[0][3].value).to eq "Rick James"
   end
 
@@ -287,7 +287,7 @@ describe FML::FMLForm do
     }
     form = getform("simple.yaml").fill(params)
 
-    expect(form.fieldsets[0][2].value.iso8601).to eq "2014-09-22"
+    expect(form.fieldsets[0][2].date.iso8601).to eq "2014-09-22"
 
     params["sampleDate"] = "invalid date"
     expect {getform("simple.yaml").fill(params)}.to raise_exception FML::ValidationErrors
@@ -295,7 +295,7 @@ describe FML::FMLForm do
     begin
       getform("simple.yaml").fill(params)
     rescue FML::ValidationErrors => e
-      expect(e.message).to eq "Invalid date \"invalid date\" for field \"sampleDate\", expected format \"%m/%d/%Y\"\nField \"sampleDate\" is required\n"
+      expect(e.message).to eq "Invalid date \"invalid date\" for field \"sampleDate\", expected format \"%m/%d/%Y\"\n"
     end
   end
 
@@ -307,13 +307,29 @@ describe FML::FMLForm do
     }
     form = getform("date.yaml").fill(params)
 
-    expect(form.fieldsets[0][0].value.iso8601).to eq "1950-09-22"
-    expect(form.fieldsets[0][1].value.iso8601).to eq "1950-09-22"
-    expect(form.fieldsets[0][2].value.iso8601).to eq "1950-09-22"
+    expect(form.fieldsets[0][0].date.iso8601).to eq "1950-09-22"
+    expect(form.fieldsets[0][1].date.iso8601).to eq "1950-09-22"
+    expect(form.fieldsets[0][2].date.iso8601).to eq "1950-09-22"
 
     expect(form.fieldsets[0][0].to_h[:value]).to eq params["date1"]
     expect(form.fieldsets[0][1].to_h[:value]).to eq params["date2"]
     expect(form.fieldsets[0][2].to_h[:value]).to eq params["date3"]
+  end
+
+  it "saves errors in fields" do
+    params = {
+      "hasDiabetes" => "yes",
+      "sampleCheckbox" => "0",
+      "sampleDate" => "",
+      "sampleTextarea" => "Rick James",
+    }
+    begin
+      form = getform("simple.yaml")
+      form.fill(params)
+    rescue FML::ValidationErrors => e
+      expect(form.fields["sampleDate"].errors.length).to eq 1
+      expect(form.fields["sampleDate"].errors[0]).to be_a FML::ValidationError
+    end
   end
 
   private
