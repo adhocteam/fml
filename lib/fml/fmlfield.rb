@@ -49,16 +49,20 @@ module FML
     end
 
     def to_h
-      {name: @name,
-       fieldType: @type,
-       label: @label,
-       prompt: @prompt,
-       isRequired: @required,
-       options: @options,
-       conditionalOn: @conditional_on,
-       validations: @validations,
-       value: @value,
+      h = {
+        name: @name,
+        fieldType: @type,
+        label: @label
       }
+
+      h[:prompt] = @prompt if @prompt
+      h[:isRequired] = @required if @required
+      h[:options] = @options if @options
+      h[:conditionalOn] = @conditional_on if @conditional_on
+      h[:validations] = @validations if @validations
+      h[:value] = @value if @value
+
+      h
     end
 
     def inspect; self.to_h.to_s end
