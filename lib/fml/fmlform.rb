@@ -77,7 +77,7 @@ Field #{name.inspect} is required
       end
 
       if !errors.empty?
-        raise ValidationErrors.new(errors)
+        raise ValidationErrors.new(errors, self)
       end
 
       self
@@ -244,10 +244,12 @@ has the same name as: #{@fields[name].to_s}
 
   # a container for ValidationError instances found by #validate
   class ValidationErrors<Exception
-    attr :errors
-    def initialize(errors)
+    attr :errors, :form
+
+    def initialize(errors, form)
       super(errors.collect{ |e| e.message }.join(""))
       @errors = errors
+      @form = form
     end
   end
 
