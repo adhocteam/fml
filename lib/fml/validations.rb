@@ -39,9 +39,11 @@ module FML
       # if parent is true and not empty, child must be truthy (is that the right semantics?)
       # XXX: should move this logic into the FmlField object?
       if @parent.value && @parent.value != "" && (!@child.value || @child.value == "")
-        err = DependencyError.new(<<-EOM, @child.name, @parent.name)
+        debug_message = <<-EOM
 Field #{@child.name}:#{@child.value.inspect} must be present when #{@parent.name}:#{@parent.value.inspect} is
         EOM
+        user_message = "This field is required"
+        err = DependencyError.new(user_message, debug_message, @child.name, @parent.name)
         @child.errors << err
         raise err
       end
@@ -57,9 +59,11 @@ Field #{@child.name}:#{@child.value.inspect} must be present when #{@parent.name
     def validate
       # @field must be either nil or have length >= minLength
       if @field.value && @field.value.length < @minlength
-        err = ValidationError.new(<<-EOM, @field.name)
+        debug_message = <<-EOM
 Field #{@field.name}:#{@field.value.inspect} must be longer than #{@minlength} characters
         EOM
+        user_message = "Must be longer than #{@minlength} characters"
+        err = ValidationError.new(user_message, debug_message, @field.name)
         @field.errors << err
         raise err
       end

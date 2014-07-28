@@ -162,7 +162,7 @@ describe FML::FMLForm do
       form.fill({})
     rescue FML::ValidationErrors => e
       expect(e.errors.length).to eq 1
-      expect(e.message).to eq "Field \"required\" is required\n"
+      expect(e.message).to eq "This Field is Required\n"
       expect(e.form).to be_a FML::FMLForm
     end
   end
@@ -232,7 +232,7 @@ describe FML::FMLForm do
     begin
       getform("validation.yaml").fill(params)
     rescue FML::ValidationErrors => e
-      expect(e.message).to eq "Field requiredIfRoot:nil must be present when root:true is\n"
+      expect(e.message).to eq "This field is required\n"
     end
 
     params = {"root" => "true", "requiredIfRoot" => "tooshort"}
@@ -240,7 +240,7 @@ describe FML::FMLForm do
     begin
       getform("validation.yaml").fill(params)
     rescue FML::ValidationErrors => e
-      expect(e.message).to eq "Field requiredIfRoot:\"tooshort\" must be longer than 10 characters\n"
+      expect(e.message).to eq "Must be longer than 10 characters\n"
     end
 
     # We had a bug where the empty string was the value for a blank text field,
@@ -252,7 +252,7 @@ describe FML::FMLForm do
     begin
       getform("validation2.yaml").fill(params)
     rescue FML::ValidationErrors => e
-      expect(e.message).to eq "Field requiredIfRoot:\"\" must be present when root:true is\n"
+      expect(e.message).to eq "This field is required\n"
     end
   end
 
@@ -296,7 +296,8 @@ describe FML::FMLForm do
     begin
       getform("simple.yaml").fill(params)
     rescue FML::ValidationErrors => e
-      expect(e.message).to eq "Invalid date \"invalid date\" for field \"sampleDate\", expected format \"%m/%d/%Y\"\n"
+      expect(e.message).to eq "Invalid date, must match format %m/%d/%Y\n"
+      expect(e.errors[0].debug_message).to eq "Invalid date \"invalid date\" for field \"sampleDate\", expected format \"%m/%d/%Y\"\n"
     end
   end
 

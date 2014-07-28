@@ -59,9 +59,9 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
       # check required fields
       @fields.each do |name,field|
         if field.required && field.value.nil?
-          e = ValidationError.new(<<-EOM, field.name)
-Field #{name.inspect} is required
-          EOM
+          debug_msg = "Field #{name.inspect} is required"
+          user_msg = "This Field is Required"
+          e = ValidationError.new(user_msg, debug_msg, field.name)
           errors << e
           field.errors << e
         end
@@ -223,22 +223,22 @@ has the same name as: #{@fields[name].to_s}
   end
 
   class ValidationError<Exception
-    attr :field_name
-    def initialize(message, field_name)
-      if !message.end_with? "\n"
-        message += "\n"
-      end
+    attr :debug_message, :field_name
+    def initialize(user_message, debug_message, field_name)
+      user_message += "\n" if !user_message.end_with? "\n"
+      debug_message += "\n" if !user_message.end_with? "\n"
 
-      super(message)
+      super(user_message)
+      @debug_message = debug_message
       @field_name = field_name
     end
   end
 
   class DependencyError<ValidationError
     attr :depends_on
-    def initialize(message, field_name, depends_on)
+    def initialize(user_message, debug_message, field_name, depends_on)
       @depends_on = depends_on
-      super(message, field_name)
+      super(user_message, debug_message, field_name)
     end
   end
 
