@@ -53,6 +53,23 @@ describe FML::FMLForm do
     expect(f.fieldsets[0][3].value).to eq "bananas"
   end
 
+  it "preserves the helptext attribute" do
+    form = getdata("simple.yaml")
+
+    # Add the "value" attribute to hasDiabetes and give it "yes"
+    y = YAML.load(form)
+    helptext = <<-EOL
+This is a field
+where help text can go
+it can contain newlines
+they will be preserved
+    EOL
+    y["form"]["fieldsets"][0]["fieldset"][3]["field"]["helptext"] = helptext
+
+    f = FML::FMLForm.new(y.to_yaml)
+    expect(f.fieldsets[0][3].helptext).to eq helptext
+  end
+
   it "can fill in a form" do
     params = {
       "hasDiabetes" => "yes",
