@@ -9,7 +9,7 @@ describe FML::FMLForm do
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
-    expect(f.fieldsets[0].length).to eq 4
+    expect(f.fieldsets[0].length).to eq 5
 
     field = f.fieldsets[0][0]
     expect(field.name).to eq "hasDiabetes"
@@ -34,6 +34,12 @@ describe FML::FMLForm do
     expect(field.type).to eq "text"
     expect(field.label).to eq "Enter some text"
     expect(field.required).to eq true
+
+    field = f.fieldsets[0][4]
+    expect(field.name).to eq "sampleString"
+    expect(field.type).to eq "string"
+    expect(field.label).to eq "This is a string"
+    expect(field.required).to eq true
   end
 
   it "preserves the value" do
@@ -53,6 +59,7 @@ describe FML::FMLForm do
       "sampleCheckbox" => "0",
       "sampleDate" => "01/01/2014",
       "sampleTextarea" => "Rick James",
+      "sampleString" => "Lazy brown fox",
     }
     form = getform("simple.yaml").fill(params)
 
@@ -69,6 +76,7 @@ describe FML::FMLForm do
       "sampleCheckbox" => "1",
       "sampleDate" => "01/01/2014",
       "sampleTextarea" => "Rick James",
+      "sampleString" => "Lazy brown fox",
     }
     json = getform("simple.yaml").fill(params).to_json
 
@@ -93,6 +101,7 @@ describe FML::FMLForm do
       "sampleCheckbox" => "1",
       "sampleDate" => "01/01/2014",
       "sampleTextarea" => "Rick James",
+      "sampleString" => "Lazy brown fox",
     }
     json = getform("simple.yaml").fill(params).to_json
 
@@ -100,7 +109,7 @@ describe FML::FMLForm do
     expect(f.title).to eq "Simple sample form"
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
-    expect(f.fieldsets[0].length).to eq 4
+    expect(f.fieldsets[0].length).to eq 5
 
     field = f.fieldsets[0][0]
     expect(field.name).to eq "hasDiabetes"
@@ -262,6 +271,7 @@ describe FML::FMLForm do
       "sampleCheckbox" => "1",
       "sampleDate" => "",
       "sampleTextarea" => "Rick James",
+      "sampleString" => "Lazy brown fox",
     }
     yaml = YAML.load(getdata("simple.yaml"))
     yaml["form"]["fieldsets"][0]["fieldset"][2]["field"]["isRequired"] = "false"
@@ -273,6 +283,7 @@ describe FML::FMLForm do
       "sampleCheckbox" => "1",
       "sampleDate" => "10/10/2014",
       "sampleTextarea" => "Rick James",
+      "sampleString" => "Lazy brown fox",
     }
     yaml = YAML.load(getdata("simple.yaml"))
     yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["isRequired"] = "false"
@@ -285,6 +296,7 @@ describe FML::FMLForm do
       "sampleCheckbox" => "0",
       "sampleDate" => "09/22/2014",
       "sampleTextarea" => "Rick James",
+      "sampleString" => "Lazy brown fox",
     }
     form = getform("simple.yaml").fill(params)
 
@@ -324,6 +336,7 @@ describe FML::FMLForm do
       "sampleCheckbox" => "0",
       "sampleDate" => "",
       "sampleTextarea" => "Rick James",
+      "sampleString" => "Lazy brown fox",
     }
     begin
       form = getform("simple.yaml")

@@ -23,3 +23,8 @@ form:
           fieldType: "text"
           label: "Enter some text"
           isRequired: true
+      - field:
+          name: "sampleString"
+          fieldType: "string"
+          label: "This is a string"
+          isRequired: true
