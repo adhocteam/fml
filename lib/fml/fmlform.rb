@@ -15,6 +15,7 @@ module FML
       "date" => DateField,
       "time" => FMLField,
       "checkbox" => FMLField,
+      "string" => FMLField,
     }
 
     def initialize(form)
@@ -155,55 +156,51 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
     end
 
     def parsefield(field)
-      name = getrequired(field, "name")
+      params = {}
+      params[:name] = getrequired(field, "name")
 
       # names must be valid HTML 4 ids:
       #   ID and NAME tokens must begin with a letter ([A-Za-z]) and may be
       #   followed by any number of letters, digits ([0-9]), hyphens ("-"),
       #   underscores ("_"), colons (":"), and periods (".").
-      if name.match(/^[A-Za-z][A-Za-z0-9\-_:\.]*$/).nil?
-        raise InvalidSpec.new("Invalid field name #{name.inspect} in form field #{field}")
+      if params[:name].match(/^[A-Za-z][A-Za-z0-9\-_:\.]*$/).nil?
+        raise InvalidSpec.new("Invalid field name #{params[:name].inspect} in form field #{field}")
       end
 
-      type = getrequired(field, "fieldType")
-      validtypes = ["text", "select", "multi-select", "yes_no", "date", "time", "checkbox"]
-      if validtypes.index(type).nil?
-        raise InvalidSpec.new("Invalid field type #{type.inspect} in form field #{field}")
+      params[:type] = getrequired(field, "fieldType")
+      validtypes = ["text", "select", "multi-select", "yes_no", "date", "time", "checkbox", "string"]
+      if validtypes.index(params[:type]).nil?
+        raise InvalidSpec.new("Invalid field type #{params[:type].inspect} in form field #{field}")
       end
 
-      label = getrequired(field, "label")
-      prompt = field["prompt"]
-      is_required = field["isRequired"]
+      params[:label] = getrequired(field, "label")
+      params[:prompt] = field["prompt"]
+      params[:required] = field["isRequired"]
 
-      options = field["options"]
+      params[:options] = field["options"]
 
       # if field is conditional on another field, store the dependency
-      conditional = field["conditionalOn"]
-      if !conditional.nil?
-        @conditional[conditional] << name
+      params[:conditional] = field["conditionalOn"]
+      if !params[:conditional].nil?
+        @conditional[params[:conditional]] << params[:name]
       end
 
-      validations = field["validations"]
-      value = field["value"]
+      params[:validations] = field["validations"]
+      params[:value] = field["value"]
+      params[:helptext] = field["helptext"]
+      params[:format] = field["format"]
 
-      if type != "date"
-        field = FMLField.new(name, type, label, prompt, is_required, options,
-                             conditional, validations, value)
-      else
-        format = field["format"]
-        field = DateField.new(name, type, label, prompt, is_required, options,
-                              conditional, validations, value, format)
-      end
+      field = @@field_classes[params[:type]].new(params)
 
-
-      if @fields.has_key? name
+      if @fields.has_key? params[:name]
         raise InvalidSpec.new(<<-ERR)
-Duplicate field name #{name}.
+Duplicate field name #{params[:name]}.
 This field: #{field.to_s}
-has the same name as: #{@fields[name].to_s}
+has the same name as: #{@fields[params[:name]].to_s}
         ERR
       end
-      @fields[name] = field
+
+      @fields[params[:name]] = field
     end
 
     def getrequired(obj, attr)

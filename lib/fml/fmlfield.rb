@@ -5,17 +5,16 @@ module FML
 
     attr_accessor :value, :errors
 
-    def initialize(name, type, label, prompt, required, options, conditional_on,
-                  validations, value)
-      @name = name
-      @type = type
-      @label = label
-      @prompt = prompt
-      self.required = required
-      @options = options
-      @conditional_on = conditional_on
-      @validations = validations
-      self.value = value
+    def initialize(params)
+      @name = params[:name]
+      @type = params[:type]
+      @label = params[:label]
+      @prompt = params[:prompt]
+      self.required = params[:required]
+      @options = params[:options]
+      @conditional_on = params[:conditional_on]
+      @validations = params[:validations]
+      self.value = params[:value]
       @errors = []
     end
 
@@ -73,14 +72,12 @@ module FML
   class DateField<FMLField
     attr_accessor :date
 
-    def initialize(name, type, label, prompt, required, options, conditional_on,
-                  validations, value, format)
+    def initialize(params)
       # defaults to month/day/year (American style)
-      @format = format || "%m/%d/%Y"
+      @format = params[:format] || "%m/%d/%Y"
       @date = nil
 
-      super(name, type, label, prompt, required, options, conditional_on,
-                  validations, value)
+      super(params)
     end
 
     def to_h
