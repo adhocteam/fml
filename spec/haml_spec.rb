@@ -7,7 +7,7 @@ describe FML::HamlAdapter do
 
     output = FML::HamlAdapter.new(f).render()
     expected = File.read(File.join(File.dirname(__FILE__), "data", "simple.html"))
-    expect(output).to eq expected
+    expect(expected).to eq output
   end
 
   it "renders an FMLForm into a show page" do
@@ -16,7 +16,7 @@ describe FML::HamlAdapter do
 
     output = FML::HamlAdapter.new(f).render_show()
     expected = File.read(File.join(File.dirname(__FILE__), "data", "simple_show.html"))
-    expect(output).to eq expected
+    expect(expected).to eq output
   end
 
   it "throws a TemplateMissing error when it can't find a template" do
