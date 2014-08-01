@@ -168,7 +168,7 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
       end
 
       params[:type] = getrequired(field, "fieldType")
-      validtypes = ["text", "select", "multi-select", "yes_no", "date", "time", "checkbox", "string"]
+      validtypes = @@field_classes.keys
       if validtypes.index(params[:type]).nil?
         raise InvalidSpec.new("Invalid field type #{params[:type].inspect} in form field #{field}")
       end
