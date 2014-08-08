@@ -16,6 +16,7 @@ module FML
       "time" => FMLField,
       "checkbox" => FMLField,
       "string" => FMLField,
+      "radio" => FMLField
     }
 
     def initialize(form)

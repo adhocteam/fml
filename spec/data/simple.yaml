@@ -28,3 +28,28 @@ form:
           fieldType: "string"
           label: "This is a string"
           isRequired: true
+      - field:
+          name: "sampleRadio"
+          fieldType: "radio"
+          label: "Please select one of the following options"
+          isRequired: false
+          options:
+            -
+              - One
+              - 1
+            -
+              - Two
+              - 2
+            - 
+              - Three
+              - 3
+      - field:
+          name: "sampleSelect"
+          fieldType: "select"
+          label: "Please select one of the following options"
+          isRequired: false
+          options:
+            - 1
+            - 2
+            - 3
+      
