@@ -12,7 +12,7 @@ module FML
       @prompt = params[:prompt]
       self.required = params[:required]
       @options = params[:options]
-      @conditional_on = params[:conditional_on]
+      @conditional_on = params[:conditionalOn]
       @validations = params[:validations]
       @helptext = params[:helptext]
       self.value = params[:value]

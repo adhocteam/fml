@@ -22,6 +22,7 @@ describe FML::FMLForm do
     expect(field.type).to eq "checkbox"
     expect(field.label).to eq "Would you like to check me?"
     expect(field.required).to eq true
+    expect(field.conditional_on).to eq "hasDiabetes"
 
     field = f.fieldsets[0][2]
     expect(field.name).to eq "sampleDate"
@@ -197,13 +198,13 @@ they will be preserved
     yaml = YAML.load(getdata("simple.yaml"))
     invalid_names = [".something", "_", "Some$thing", "sp ace"]
     invalid_names.each do |name|
-      yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["name"] = name
+      yaml["form"]["fieldsets"][0]["fieldset"][2]["field"]["name"] = name
       expect {FML::FMLForm.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
     end
 
     valid_names = ["Something", "MiXeD", "da-sh", "why.dot", "un_der", "l33t"]
     valid_names.each do |name|
-      yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["name"] = name
+      yaml["form"]["fieldsets"][0]["fieldset"][2]["field"]["name"] = name
       expect(FML::FMLForm.new(yaml.to_yaml)).to be_a FML::FMLForm
     end
   end

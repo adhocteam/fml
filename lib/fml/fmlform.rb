@@ -181,9 +181,9 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
       params[:options] = field["options"]
 
       # if field is conditional on another field, store the dependency
-      params[:conditional] = field["conditionalOn"]
-      if !params[:conditional].nil?
-        @conditional[params[:conditional]] << params[:name]
+      params[:conditionalOn] = field["conditionalOn"]
+      if !params[:conditionalOn].nil?
+        @conditional[params[:conditionalOn]] << params[:name]
       end
 
       params[:validations] = field["validations"]

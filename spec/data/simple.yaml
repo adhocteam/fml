@@ -13,6 +13,7 @@ form:
           fieldType: "checkbox"
           label: "Would you like to check me?"
           isRequired: true
+          conditionalOn: "hasDiabetes"
       - field:
           name: "sampleDate"
           fieldType: "date"
