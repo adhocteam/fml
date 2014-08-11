@@ -19,3 +19,13 @@ And then execute:
 Or install it yourself as:
 
     $ gem install fmlforms
+
+## Deploying
+
+To deploy to our geminabox server, you first need to increment the version of
+the gem, which is in lib/fml/version.rb. Then:
+
+    # if you don't have the source added, add it. After you've done this once,
+    # you shouldn't need to do it again
+    $ gem sources -a http://107.170.81.161:9292/
+    $ rake deploy
