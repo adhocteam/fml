@@ -2,6 +2,8 @@ require 'haml'
 
 module FML
   class HamlAdapter
+    EMPTY = Object.new
+
     def initialize(formspec, template_dir=nil)
       @formspec = formspec
       if template_dir.nil?
@@ -25,25 +27,25 @@ Unable to parse file due to Haml syntax error:
       end
     end
 
-    def render()
+    def render(view_context=EMPTY)
       locals = {formspec: @formspec}
-      out = _render("header", locals)
+      out = _render("header", locals, view_context)
       @formspec.fieldsets.each do |fieldset|
         fieldset.each do |field|
           locals[:field] = field
-          out += _render(field.type, locals)
+          out += _render(field.type, locals, view_context)
         end
       end
       out
     end
 
-    def render_show()
+    def render_show(view_context=EMPTY)
       locals = {formspec: @formspec}
-      out = _render("header_show", locals)
+      out = _render("header_show", locals, view_context)
       @formspec.fieldsets.each do |fieldset|
         fieldset.each do |field|
           locals[:field] = field
-          out += _render("#{field.type}_show", locals)
+          out += _render("#{field.type}_show", locals, view_context)
         end
       end
       out
@@ -51,12 +53,11 @@ Unable to parse file due to Haml syntax error:
 
     private
 
-    def _render(template, locals)
-      o = Object.new
+    def _render(template, locals, view_context=EMPTY)
       if !@@templates.has_key? template
         raise TemplateMissing.new("Unable to find template \"#{template}\" in template list #{@@templates}")
       end
-      @@templates[template].render(o, locals)
+      @@templates[template].render(view_context, locals)
     end
   end
 

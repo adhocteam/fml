@@ -51,4 +51,21 @@ describe FML::HamlAdapter do
       expect(e.message).to match ".+:1: Illegal nesting: nesting within plain text is illegal."
     end
   end
+
+  it "correctly uses a view context" do
+    form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
+    f = FML::FMLForm.new(form)
+
+    class Context
+      def image_path
+        return "supercalifrajalistic"
+      end
+    end
+    adapter = FML::HamlAdapter.new(f, File.join(File.dirname(__FILE__), "data", "context_test"))
+    output = adapter.render(Context.new)
+    expect(output).to match /supercalifrajalistic/
+
+    output = adapter.render_show(Context.new)
+    expect(output).to match /supercalifrajalistic/
+  end
 end
