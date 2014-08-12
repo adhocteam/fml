@@ -174,7 +174,7 @@ they will be preserved
     begin
       getform("duplicate_name.yaml")
     rescue FML::InvalidSpec => e
-      expect(e.message).to eq "Duplicate field name name.\nThis field: {:name=>\"name\", :fieldType=>\"yes_no\", :label=>\"gooseegg\"}\nhas the same name as: {:name=>\"name\", :fieldType=>\"checkbox\", :label=>\"bananarama\", :isRequired=>true}\n"
+      expect(e.message).to eq "Duplicate field name name.\nThis field: {:name=>\"name\", :fieldType=>\"yes_no\", :label=>\"gooseegg\", :isRequired=>false}\nhas the same name as: {:name=>\"name\", :fieldType=>\"checkbox\", :label=>\"bananarama\", :isRequired=>true}\n"
     end
   end
 
@@ -368,7 +368,7 @@ they will be preserved
   it "accepts 'no' as a valid answer on a required field" do
     form = getform("yes_no.yaml")
     form.fill({"root" => "yes", "requiredifroot" => "no"})
-    expect(form.fields["requiredifroot"]).to eq "no"
+    expect(form.fields["requiredifroot"].value).to eq false
   end
 
   private
