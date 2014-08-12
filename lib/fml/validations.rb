@@ -36,8 +36,9 @@ module FML
     end
 
     def validate
-      # if parent not empty, child must be non-empty
-      if !@parent.empty? && @child.empty?
+      # if parent is true, child must be non-empty. Note that @parent is required to be a boolean
+      # element, so we don't need to worry about "" being a truthy value
+      if @parent.value && @child.empty?
         debug_message = <<-EOM
 Field #{@child.name}:#{@child.value.inspect} must be present when #{@parent.name}:#{@parent.value.inspect} is
         EOM

@@ -1,4 +1,4 @@
-require 'fml'
+require 'spec_helper'
 
 describe FML::FMLForm do
   it "creates a form from a FML spec" do
@@ -369,15 +369,5 @@ they will be preserved
     form = getform("yes_no.yaml")
     form.fill({"root" => "yes", "requiredifroot" => "no"})
     expect(form.fields["requiredifroot"].value).to eq false
-  end
-
-  private
-
-  def getdata(name)
-    File.read(File.join(File.dirname(__FILE__), "data", name))
-  end
-
-  def getform(name)
-    FML::FMLForm.new(getdata(name))
   end
 end
