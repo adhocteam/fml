@@ -365,6 +365,12 @@ they will be preserved
     end
   end
 
+  it "accepts 'no' as a valid answer on a required field" do
+    form = getform("yes_no.yaml")
+    form.fill({"root" => "yes", "requiredifroot" => "no"})
+    expect(form.fields["requiredifroot"]).to eq "no"
+  end
+
   private
 
   def getdata(name)
