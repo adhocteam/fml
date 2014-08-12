@@ -22,14 +22,11 @@ module FML
     def value=(value)
       # Convert value to boolean if a checkbox or yes_no field and value is
       # non-nil
-      if !value.nil?
-        if @type == "checkbox" || @type == "yes_no"
-          if ["1", "true", "yes", true].index(value).nil?
-            value = false
-          else
-            value = true
-          end
-        elsif @type == "date"
+      if !value.nil? && (@type == "checkbox" || @type == "yes_no")
+        if ["1", "true", "yes", true].index(value).nil?
+          value = false
+        else
+          value = true
         end
       end
 
