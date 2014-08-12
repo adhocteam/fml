@@ -46,6 +46,10 @@ module FML
       end
     end
 
+    def empty?
+      @value.nil? || @value == ""
+    end
+
     def to_h
       h = {
         name: @name,
@@ -53,12 +57,12 @@ module FML
         label: @label
       }
 
-      h[:prompt] = @prompt if @prompt
-      h[:isRequired] = @required if @required
-      h[:options] = @options if @options
-      h[:conditionalOn] = @conditional_on if @conditional_on
-      h[:validations] = @validations if @validations
-      h[:value] = @value if @value
+      h[:prompt] =        @prompt if !@prompt.nil?
+      h[:isRequired] =    @required if !@required.nil?
+      h[:options] =       @options if !@options.nil?
+      h[:conditionalOn] = @conditional_on if !@conditional_on.nil?
+      h[:validations] =   @validations if !@validations.nil?
+      h[:value] =         @value if !@value.nil?
 
       h
     end
