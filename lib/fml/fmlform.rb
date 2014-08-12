@@ -60,7 +60,7 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
 
       # check required fields
       @fields.each do |name,field|
-        if field.required && field.value.nil?
+        if field.required && field.empty?
           debug_msg = "Field #{name.inspect} is required"
           user_msg = "This Field is Required"
           e = ValidationError.new(user_msg, debug_msg, field.name)
