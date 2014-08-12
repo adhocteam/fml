@@ -196,7 +196,7 @@ they will be preserved
 
   it "raises InvalidSpec on invalid names" do
     yaml = YAML.load(getdata("simple.yaml"))
-    invalid_names = [".something", "_", "Some$thing", "sp ace"]
+    invalid_names = [".something", "_", "Some$thing", "sp ace", "!not legal"]
     invalid_names.each do |name|
       yaml["form"]["fieldsets"][0]["fieldset"][2]["field"]["name"] = name
       expect {FML::FMLForm.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec

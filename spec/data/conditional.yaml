@@ -16,4 +16,4 @@ form:
           name: "Tertiary"
           fieldType: "date"
           label: "Depends on Secondary"
-          conditionalOn: "DependsOnRoot"
+          conditionalOn: "!DependsOnRoot"

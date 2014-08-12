@@ -1,0 +1,17 @@
+form:
+  title: "Simple sample form"
+  version: "1.0"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "root"
+          fieldType: "yes_no"
+          label: "root"
+          isRequired: true
+      - field:
+          name: "requiredifroot"
+          fieldType: "text"
+          label: "Required if root"
+          conditionalOn: "!root"
+          validations:
+            - requiredIf: "!root"

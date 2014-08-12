@@ -86,7 +86,6 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
     end
 
     def to_json
-      #TODO: turn an FMLForm into a json doc
       form = {
         form: {
           title: @title,
@@ -134,6 +133,10 @@ JSON parser raised an error:
       # verify that the type of each field that is depended upon
       # is checkbox or yes_no
       @conditional.each do |conditional,dependents|
+        # if a conditional field starts with !, it's a negative assertion.
+        # Strip the leading ! and allow it to proceed as normal.
+        conditional = conditional[1..-1] if conditional.start_with? "!"
+
         if ["yes_no", "checkbox"].index(@fields[conditional].type).nil?
           raise InvalidSpec.new(<<-EOM)
 Fields #{dependents.inspect} depend on field #{conditional}, which is not a boolean.

@@ -31,16 +31,26 @@ module FML
 
   class RequiredIfValidation
     def initialize(field, data, form)
+      @negative = data.start_with? "!"
+
+      # If the assertion is negative, we require the parent to be true, and
+      # vice versa
+      @required = !@negative
+
+      # strip the ! if there was one
+      data = data[1..-1] if @negative
+
       @child = field
       @parent = form.fields[data]
     end
 
     def validate
-      # if parent is true, child must be non-empty. Note that @parent is required to be a boolean
-      # element, so we don't need to worry about "" being a truthy value
-      if @parent.value && @child.empty?
+      # if parent is @required, child must be non-empty. Note that @parent is
+      # required to be a boolean element, so we don't need to worry about ""
+      # being a truthy value
+      if @parent.value == @required && @child.empty?
         debug_message = <<-EOM
-Field #{@child.name}:#{@child.value.inspect} must be present when #{@parent.name}:#{@parent.value.inspect} is
+Field #{@child.name}:#{@child.value.inspect} must be present when #{@parent.name}:#{@parent.value.inspect} is #{@required}
         EOM
         user_message = "This field is required"
         err = DependencyError.new(user_message, debug_message, @child.name, @parent.name)

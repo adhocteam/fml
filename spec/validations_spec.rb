@@ -22,4 +22,18 @@ describe FML::RequiredIfValidation do
       expect(form.fields["requiredifroot"].value).to eq value
     end
   end
+
+  it "does negative assertions" do
+    form = getform("negative_assertion.yaml")
+    params = {"root" => "no", "requiredifroot" => ""}
+    expect {form.fill(params)}.to raise_exception FML::ValidationErrors
+
+    values = ["something", "!!!", "_"]
+    values.each do |value|
+      form = getform("negative_assertion.yaml")
+      params = {"root" => "yes", "requiredifroot" => value}
+      form.fill(params)
+      expect(form.fields["requiredifroot"].value).to eq value
+    end
+  end
 end
