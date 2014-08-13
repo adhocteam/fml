@@ -1,4 +1,5 @@
 require 'fml'
+require 'byebug'
 
 def getdata(name)
   File.read(File.join(File.dirname(__FILE__), "data", name))

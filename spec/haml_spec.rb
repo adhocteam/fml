@@ -18,17 +18,14 @@ describe FML::HamlAdapter do
   end
 
   it "throws a TemplateMissing error when it can't find a template" do
-    f = getform("simple.yaml")
+    field = double("field")
+    allow(field).to receive(:type) { "bananas" }
 
-    adapter = FML::HamlAdapter.new(f, template_dir="/tmp")
-    expect {adapter.render}.to raise_error(FML::TemplateMissing)
-    expect {adapter.render_show}.to raise_error(FML::TemplateMissing)
+    spec = double("spec")
+    allow(spec).to receive(:title) { "bananas" }
+    allow(spec).to receive(:fieldsets) { [[field]] }
 
-    begin
-      adapter.render
-    rescue FML::TemplateMissing => e
-      expect(e.message).to eq 'Unable to find template "header" in template list {}'
-    end
+    expect {FML::HamlAdapter.new(spec).render()}.to raise_exception FML::TemplateMissing
   end
 
   it "throws an InvalidTemplate error if it finds an invalid template" do

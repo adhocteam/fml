@@ -6,25 +6,15 @@ module FML
 
     def initialize(formspec, template_dir=nil)
       @formspec = formspec
+      default_dir = File.join(File.dirname(__FILE__), "haml_templates")
       if template_dir.nil?
-        template_dir = File.join(File.dirname(__FILE__), "haml_templates")
       end
 
       # In your template dir, there should be a template for "header" and
       # for each form type. They should all end with .haml
-      @@templates = {}
-      if @@templates.empty?
-        Dir.glob(File.join(template_dir, "*.haml")) do |file|
-          begin
-            @@templates[File.basename(file)[0..-6]] = Haml::Engine.new(File.read(file))
-          rescue Haml::SyntaxError => e
-            raise InvalidTemplate.new(<<-ERR, e)
-Unable to parse file due to Haml syntax error:
-#{file}:#{e.line}: #{e.message}
-            ERR
-          end
-        end
-      end
+      @templates = {}
+      scandir(default_dir, @templates)
+      scandir(template_dir, @templates) if !template_dir.nil?
     end
 
     def render(view_context=EMPTY)
@@ -53,11 +43,26 @@ Unable to parse file due to Haml syntax error:
 
     private
 
-    def _render(template, locals, view_context=EMPTY)
-      if !@@templates.has_key? template
-        raise TemplateMissing.new("Unable to find template \"#{template}\" in template list #{@@templates}")
+    # scan a directory for templates, and stick them in the templates directory
+    # given as the second argument
+    def scandir(dir, templates)
+      Dir.glob(File.join(dir, "*.haml")) do |file|
+        begin
+          @templates[File.basename(file)[0..-6]] = Haml::Engine.new(File.read(file))
+        rescue Haml::SyntaxError => e
+          raise InvalidTemplate.new(<<-ERR, e)
+Unable to parse file due to Haml syntax error:
+#{file}:#{e.line}: #{e.message}
+          ERR
+        end
       end
-      @@templates[template].render(view_context, locals)
+    end
+
+    def _render(template, locals, view_context=EMPTY)
+      if !@templates.has_key? template
+        raise TemplateMissing.new("Unable to find template \"#{template}\" in template list #{@templates}")
+      end
+      @templates[template].render(view_context, locals)
     end
   end
 
