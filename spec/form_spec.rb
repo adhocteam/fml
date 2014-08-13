@@ -35,6 +35,7 @@ describe FML::FMLForm do
     expect(field.type).to eq "text"
     expect(field.label).to eq "Enter some text"
     expect(field.required).to eq true
+    expect(field.disabled).to eq true
 
     field = f.fieldsets[0][4]
     expect(field.name).to eq "sampleString"

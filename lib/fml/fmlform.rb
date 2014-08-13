@@ -213,6 +213,7 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
       params[:value] = field["value"]
       params[:helptext] = field["helptext"]
       params[:format] = field["format"]
+      params[:disable] = field["disable"]
 
       field = @@field_classes[params[:type]].new(params)
 

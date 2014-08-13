@@ -24,6 +24,7 @@ form:
           fieldType: "text"
           label: "Enter some text"
           isRequired: true
+          disable: true
       - field:
           name: "sampleString"
           fieldType: "string"
