@@ -36,11 +36,11 @@ form:
           isRequired: false
           options:
             - name: "First"
-              value: 1
+              value: "1"
             - name: "Second"
-              value: 2
+              value: "2"
             - name: "Third"
-              value: 3
+              value: "3"
       - field:
           name: "sampleSelect"
           fieldType: "select"
@@ -48,8 +48,8 @@ form:
           isRequired: false
           options:
             - name: "First"
-              value: 1
+              value: "1"
             - name: "Second"
-              value: 2
+              value: "2"
             - name: "Third"
-              value: 3
+              value: "3"
