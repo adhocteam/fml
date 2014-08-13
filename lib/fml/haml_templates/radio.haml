@@ -4,5 +4,5 @@
     %ul
       - field.options.each do |option|
         %li
-          %input{name: field.name, type: "radio", value: option.is_a?(Array) ? option[1] : option }
-          = option.is_a?(Array) ? option[0] : option
+          %input{name: field.name, type: "radio", value: option["value"] }
+          = option["name"]

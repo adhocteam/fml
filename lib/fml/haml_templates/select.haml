@@ -3,5 +3,5 @@
     %label{for: field.name} #{field.label}
     %select
       - field.options.each do |option|
-        %option{value: option.is_a?(Array) ? option[1] : option}
-          = option.is_a?(Array) ? option[0] : option
+        %option{value: option["value"]}
+          = option["name"]

@@ -182,6 +182,20 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
       params[:required] = field["isRequired"]
 
       params[:options] = field["options"]
+      if params[:options]
+        if !params[:options].class == Array
+          raise InvalidSpec.new("Invalid option value #{params[:options].inspect} in form field #{field}")
+        end
+
+        params[:options].each do |option|
+          if option.class != Hash
+            raise InvalidSpec.new("option must be a hash but is type #{option.class} in form field #{field}")
+          end
+          if !option.has_key?("name") || !option.has_key?("value")
+            raise InvalidSpec.new("option hash #{option.inspect} must have 'name' and 'value' keys")
+          end
+        end
+      end
 
       # if field is conditional on another field, store the dependency
       params[:conditionalOn] = field["conditionalOn"]
