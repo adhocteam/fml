@@ -137,6 +137,12 @@ JSON parser raised an error:
         # Strip the leading ! and allow it to proceed as normal.
         conditional = conditional[1..-1] if conditional.start_with? "!"
 
+        if !@fields.has_key?(conditional)
+          raise InvalidSpec.new(<<-EOM)
+Fields #{dependents.inspect} depend on field #{conditional}, which does not exist
+          EOM
+        end
+
         if ["yes_no", "checkbox"].index(@fields[conditional].type).nil?
           raise InvalidSpec.new(<<-EOM)
 Fields #{dependents.inspect} depend on field #{conditional}, which is not a boolean.

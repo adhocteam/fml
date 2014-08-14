@@ -245,6 +245,18 @@ they will be preserved
     end
   end
 
+  it "raises an error for conditionalOn nonexistent field" do
+    yaml = YAML.load(getdata("conditional.yaml"))
+    yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["conditionalOn"] = "doesnotexist"
+    expect {FML::FMLForm.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
+
+    begin
+      FML::FMLForm.new(yaml.to_yaml)
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq "Fields [\"RootQ\"] depend on field doesnotexist, which does not exist\n"
+    end
+  end
+
   it "raises InvalidSpec on an invalid validation name" do
     expect {getform("invalid_validation.yaml")}.to raise_exception FML::InvalidSpec
   end
