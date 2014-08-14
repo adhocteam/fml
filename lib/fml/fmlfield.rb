@@ -1,3 +1,5 @@
+require 'redcarpet'
+
 module FML
   class FMLField
     attr_reader :name, :type, :label, :prompt, :required, :options,
@@ -84,23 +86,6 @@ module FML
       super(params)
     end
 
-    def to_h
-      h = {
-        name: @name,
-        fieldType: @type,
-        label: @label
-      }
-
-      h[:prompt] = @prompt if @prompt
-      h[:isRequired] = @required if @required
-      h[:options] = @options if @options
-      h[:conditionalOn] = @conditional_on if @conditional_on
-      h[:validations] = @validations if @validations
-      h[:value] = @value if @value
-
-      h
-    end
-
     def value=(value)
       # Date fields are text fields, so "" -> nil
       if !value || value == ""
@@ -119,6 +104,23 @@ Invalid date #{value.inspect} for field #{@name.inspect}, expected format #{@for
           user_message = "Invalid date, must match format #{@format}"
           raise ValidationError.new(user_message, debug_message, @name)
         end
+      end
+    end
+  end
+
+  class MarkdownField<FMLField
+    def initialize(params)
+      # XXX: these are just the default params given in the docs, not sure
+      # which options we really want
+      @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
+      super(params)
+    end
+
+    def value=(value)
+      if !value || value == ""
+        @value = nil
+      else
+        @value = @markdown.render(value)
       end
     end
   end

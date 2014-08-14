@@ -6,7 +6,7 @@ describe FML::HamlAdapter do
 
     output = FML::HamlAdapter.new(f).render()
     expected = getdata("simple.html")
-    expect(expected).to eq output
+    expect(output).to eq expected
   end
 
   it "renders an FMLForm into a show page" do
@@ -14,7 +14,7 @@ describe FML::HamlAdapter do
 
     output = FML::HamlAdapter.new(f).render_show()
     expected = getdata("simple_show.html")
-    expect(expected).to eq output
+    expect(output).to eq expected
   end
 
   it "throws a TemplateMissing error when it can't find a template" do

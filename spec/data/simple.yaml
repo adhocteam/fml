@@ -55,3 +55,8 @@ form:
               value: "2"
             - name: "Third"
               value: "3"
+      - field:
+          name: "sampleMarkdown"
+          fieldType: "markdown"
+          label: "Some static text"
+          value: "Something *italicized*"
