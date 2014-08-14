@@ -16,6 +16,7 @@ describe FML::FMLForm do
     expect(field.type).to eq "yes_no"
     expect(field.label).to eq "bananarama"
     expect(field.required).to eq true
+    expect(field.attrs["attribute"]).to eq "value"
 
     field = f.fieldsets[0][1]
     expect(field.name).to eq "sampleCheckbox"

@@ -1,7 +1,7 @@
 module FML
   class FMLField
     attr_reader :name, :type, :label, :prompt, :required, :options,
-      :conditional_on, :validations, :helptext, :disabled
+      :conditional_on, :validations, :helptext, :disabled, :attrs
 
     attr_accessor :value, :errors
 
@@ -16,6 +16,7 @@ module FML
       @validations = params[:validations]
       @helptext = params[:helptext]
       @disabled = params[:disable]
+      @attrs = params[:attrs]
       self.value = params[:value]
       @errors = []
     end

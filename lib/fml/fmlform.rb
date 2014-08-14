@@ -126,7 +126,7 @@ JSON parser raised an error:
       # @fieldsets is just a list of lists of fields
       @fieldsets = getrequired(@form, "fieldsets").collect do |fieldset|
         getrequired(fieldset, "fieldset").collect do |field|
-          parsefield(field["field"])
+          parsefield(field)
         end
       end
 
@@ -160,39 +160,45 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
     end
 
     def parsefield(field)
+      # We want to keep the original field untouched for good debugging
+      # messages, and we make destructive updates below, so make a deep
+      # copy of the field and save the original
+      fullfield = field["field"]
+      field = YAML.load(YAML.dump(field["field"]))
+
       params = {}
-      params[:name] = getrequired(field, "name")
+      params[:name] = poprequired(field, "name")
 
       # names must be valid HTML 4 ids:
       #   ID and NAME tokens must begin with a letter ([A-Za-z]) and may be
       #   followed by any number of letters, digits ([0-9]), hyphens ("-"),
       #   underscores ("_"), colons (":"), and periods (".").
       if params[:name].match(/^[A-Za-z][A-Za-z0-9\-_:\.]*$/).nil?
-        raise InvalidSpec.new("Invalid field name #{params[:name].inspect} in form field #{field}")
+        raise InvalidSpec.new("Invalid field name #{params[:name].inspect} in form field #{fullfield}")
       end
 
-      params[:type] = getrequired(field, "fieldType")
+      params[:type] = poprequired(field, "fieldType")
       validtypes = @@field_classes.keys
       if validtypes.index(params[:type]).nil?
-        raise InvalidSpec.new("Invalid field type #{params[:type].inspect} in form field #{field}")
+        raise InvalidSpec.new("Invalid field type #{params[:type].inspect} in form field #{fullfield}")
       end
 
-      params[:label] = getrequired(field, "label")
-      params[:prompt] = field["prompt"]
-      params[:required] = field["isRequired"]
+      params[:label] = poprequired(field, "label")
+      params[:prompt] = pop(field, "prompt")
+      params[:required] = pop(field, "isRequired")
 
 
       # options must be a list of hashes with at least "name" and "value"
       # keys, whose values must be strings
-      params[:options] = field["options"]
+      params[:options] = pop(field, "options")
       if params[:options]
         if !params[:options].class == Array
-          raise InvalidSpec.new("Invalid option value #{params[:options].inspect} in form field #{field}")
+          raise InvalidSpec.new("Invalid option value #{params[:options].inspect} in form field #{fullfield}")
         end
 
         params[:options].each do |option|
           if !option.is_a?(Hash)
-            raise InvalidSpec.new("option must be a hash but is type #{option.class} in form field #{field}")
+            raise InvalidSpec.new("option must be a hash but is type #{option.class} in form field #{fullfield}")
           end
           if !option.has_key?("name") || !option.has_key?("value")
             raise InvalidSpec.new("option hash #{option.inspect} must have 'name' and 'value' keys")
@@ -204,16 +210,19 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
       end
 
       # if field is conditional on another field, store the dependency
-      params[:conditionalOn] = field["conditionalOn"]
+      params[:conditionalOn] = pop(field, "conditionalOn")
       if !params[:conditionalOn].nil?
         @conditional[params[:conditionalOn]] << params[:name]
       end
 
-      params[:validations] = field["validations"]
-      params[:value] = field["value"]
-      params[:helptext] = field["helptext"]
-      params[:format] = field["format"]
-      params[:disable] = field["disable"]
+      params[:validations] = pop(field, "validations")
+      params[:value] = pop(field, "value")
+      params[:helptext] = pop(field, "helptext")
+      params[:format] = pop(field, "format")
+      params[:disable] = pop(field, "disable")
+
+      # The remaining kwargs get stuck in the params hash
+      params[:attrs] = field
 
       field = @@field_classes[params[:type]].new(params)
 
@@ -228,9 +237,30 @@ has the same name as: #{@fields[params[:name]].to_s}
       @fields[params[:name]] = field
     end
 
+    # return attr from hash obj. If it's not present, throw an exception
     def getrequired(obj, attr)
       begin
         x = obj[attr]
+        if x.nil?
+          raise InvalidSpec.new("Could not find required `#{attr}` attribute in #{obj}")
+        end
+      # bare except sucks, but this has raised at least: NoMethodError and TypeError.
+      # I wish there were documentation on what errors could be raised so that I
+      # could except only those ones
+      rescue
+        raise InvalidSpec.new("Could not find required `#{attr}` attribute in #{obj}")
+      end
+      x
+    end
+
+    # pull attr from hash obj and delete it.
+    def pop(obj, attr)
+      obj.delete(attr)
+    end
+
+    def poprequired(obj, attr)
+      begin
+        x = obj.delete(attr)
         if x.nil?
           raise InvalidSpec.new("Could not find required `#{attr}` attribute in #{obj}")
         end

@@ -8,6 +8,7 @@ form:
           fieldType: "yes_no"
           label: "bananarama"
           isRequired: true
+          attribute: "value"
       - field:
           name: "sampleCheckbox"
           fieldType: "checkbox"
