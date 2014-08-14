@@ -7,8 +7,6 @@ module FML
     def initialize(formspec, template_dir=nil)
       @formspec = formspec
       default_dir = File.join(File.dirname(__FILE__), "haml_templates")
-      if template_dir.nil?
-      end
 
       # In your template dir, there should be a template for "header" and
       # for each form type. They should all end with .haml
