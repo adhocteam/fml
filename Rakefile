@@ -4,12 +4,12 @@ require 'rspec/core/rake_task'
 # require FML
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'fml/version'
+require 'fml_forms/version'
 
 RSpec::Core::RakeTask.new(:spec)
 
 task :default => :spec
 
 task :deploy => :build do
-  sh "gem inabox pkg/fml-#{FML::VERSION}.gem"
+  sh "gem inabox pkg/fml_forms-#{FML::VERSION}.gem"
 end
