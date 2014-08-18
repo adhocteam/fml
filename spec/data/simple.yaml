@@ -60,3 +60,7 @@ form:
           fieldType: "markdown"
           label: "Some static text"
           value: "Something *italicized*"
+      - field:
+          name: "samplePartialDate"
+          fieldType: "partialdate"
+          label: "Partial Date"

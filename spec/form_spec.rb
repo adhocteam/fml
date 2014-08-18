@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe FML::FMLForm do
+describe FML::Form do
   it "creates a form from a FML spec" do
     form = getdata("simple.yaml")
 
-    f = FML::FMLForm.new(form)
+    f = FML::Form.new(form)
     expect(f.title).to eq "Simple sample form"
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
-    expect(f.fieldsets[0].length).to eq 8
+    expect(f.fieldsets[0].length).to eq 9
 
     field = f.fieldsets[0][0]
     expect(field.name).to eq "hasDiabetes"
@@ -43,6 +43,32 @@ describe FML::FMLForm do
     expect(field.type).to eq "string"
     expect(field.label).to eq "This is a string"
     expect(field.required).to eq true
+
+    field = f.fieldsets[0][5]
+    expect(field.name).to eq "sampleRadio"
+    expect(field.type).to eq "radio"
+    expect(field.label).to eq "Please select one of the following options"
+    expect(field.required).to eq false
+    expect(field.options[0]["name"]).to eq "First"
+    expect(field.options[0]["value"]).to eq "1"
+
+    field = f.fieldsets[0][6]
+    expect(field.name).to eq "sampleSelect"
+    expect(field.type).to eq "select"
+    expect(field.label).to eq "Please select one of the following options"
+    expect(field.required).to eq false
+    expect(field.options[1]["name"]).to eq "Second"
+    expect(field.options[1]["value"]).to eq "2"
+
+    field = f.fieldsets[0][7]
+    expect(field.name).to eq "sampleMarkdown"
+    expect(field.type).to eq "markdown"
+    expect(field.value).to eq "<p>Something <em>italicized</em></p>\n"
+
+    field = f.fieldsets[0][8]
+    expect(field.name).to eq "samplePartialDate"
+    expect(field.type).to eq "partialdate"
+    expect(field.label).to eq "Partial Date"
   end
 
   it "preserves the value" do
@@ -52,7 +78,7 @@ describe FML::FMLForm do
     y = YAML.load(form)
     y["form"]["fieldsets"][0]["fieldset"][3]["field"]["value"] = "bananas"
 
-    f = FML::FMLForm.new(y.to_yaml)
+    f = FML::Form.new(y.to_yaml)
     expect(f.fieldsets[0][3].value).to eq "bananas"
   end
 
@@ -69,7 +95,7 @@ they will be preserved
     EOL
     y["form"]["fieldsets"][0]["fieldset"][3]["field"]["helptext"] = helptext
 
-    f = FML::FMLForm.new(y.to_yaml)
+    f = FML::Form.new(y.to_yaml)
     expect(f.fieldsets[0][3].helptext).to eq helptext
   end
 
@@ -83,11 +109,46 @@ they will be preserved
     }
     form = getform("simple.yaml").fill(params)
 
-    expect(form).to be_a(FML::FMLForm)
+    expect(form).to be_a(FML::Form)
     expect(form.fieldsets[0][0].value).to eq true
     expect(form.fieldsets[0][1].value).to eq false
+    expect(form.fieldsets[0][2].value).to eq "01/01/2014"
     expect(form.fieldsets[0][2].date.iso8601).to eq "2014-01-01"
     expect(form.fieldsets[0][3].value).to eq "Rick James"
+    expect(form.fieldsets[0][4].value).to eq "Lazy brown fox"
+  end
+
+  it "allows a partial form fill and preserves values" do
+    params = {
+      "hasDiabetes" => "yes",
+      "sampleCheckbox" => "0",
+      # these attributes are required. omit them.
+      #"sampleDate" => "01/01/2014",
+      #"sampleTextarea" => "Rick James",
+      #"sampleString" => "Lazy brown fox",
+    }
+    form = getform("simple.yaml").fill(params)
+
+    expect(form).to be_a(FML::Form)
+    expect(form.fieldsets[0][0].value).to eq true
+    expect(form.fieldsets[0][1].value).to eq false
+    expect(form.fieldsets[0][2].value).to eq nil
+    expect(form.fieldsets[0][3].value).to eq nil
+    expect(form.fieldsets[0][4].value).to eq nil
+  end
+
+  it "properly stores the value of empty text fields" do
+    params = {
+      "sampleDate" => "",
+      "sampleTextarea" => "",
+      "sampleString" => "",
+    }
+    form = getform("simple.yaml").fill(params)
+
+    expect(form).to be_a(FML::Form)
+    expect(form.fieldsets[0][2].value).to eq nil
+    expect(form.fieldsets[0][3].value).to eq nil
+    expect(form.fieldsets[0][4].value).to eq nil
   end
 
   it "can export itself as json" do
@@ -125,11 +186,11 @@ they will be preserved
     }
     json = getform("simple.yaml").fill(params).to_json
 
-    f = FML::FMLForm.from_json(json)
+    f = FML::Form.from_json(json)
     expect(f.title).to eq "Simple sample form"
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
-    expect(f.fieldsets[0].length).to eq 8
+    expect(f.fieldsets[0].length).to eq 9
 
     field = f.fieldsets[0][0]
     expect(field.name).to eq "hasDiabetes"
@@ -141,10 +202,10 @@ they will be preserved
   end
 
   it "raises an InvalidSpec error on invalid json" do
-    expect {FML::FMLForm.from_json("{\ninvalid json")}.to raise_exception FML::InvalidSpec
+    expect {FML::Form.from_json("{\ninvalid json")}.to raise_exception FML::InvalidSpec
 
     begin
-      FML::FMLForm.from_json("{\ninvalid json")
+      FML::Form.from_json("{\ninvalid json")
     rescue FML::InvalidSpec => e
       expect(e.message).to eq "JSON parser raised an error:\n757: unexpected token at '{\ninvalid json'\n"
     end
@@ -186,13 +247,13 @@ they will be preserved
       "notrequired" => "bananas",
     }
 
-    expect {form.fill(params)}.to raise_exception FML::ValidationErrors
+    expect {form.fill(params).validate}.to raise_exception FML::ValidationErrors
     begin
       form.fill({})
     rescue FML::ValidationErrors => e
       expect(e.errors.length).to eq 1
       expect(e.message).to eq "This Field is Required\n"
-      expect(e.form).to be_a FML::FMLForm
+      expect(e.form).to be_a FML::Form
     end
   end
 
@@ -201,21 +262,21 @@ they will be preserved
     invalid_names = [".something", "_", "Some$thing", "sp ace", "!not legal"]
     invalid_names.each do |name|
       yaml["form"]["fieldsets"][0]["fieldset"][2]["field"]["name"] = name
-      expect {FML::FMLForm.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
+      expect {FML::Form.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
     end
 
     valid_names = ["Something", "MiXeD", "da-sh", "why.dot", "un_der", "l33t"]
     valid_names.each do |name|
       yaml["form"]["fieldsets"][0]["fieldset"][2]["field"]["name"] = name
-      expect(FML::FMLForm.new(yaml.to_yaml)).to be_a FML::FMLForm
+      expect(FML::Form.new(yaml.to_yaml)).to be_a FML::Form
     end
   end
 
   it "raises InvalidSpec on invalid YAML" do
-    expect {FML::FMLForm.new('--- `')}.to raise_exception FML::InvalidSpec
+    expect {FML::Form.new('--- `')}.to raise_exception FML::InvalidSpec
 
     begin
-      FML::FMLForm.new('--- `')
+      FML::Form.new('--- `')
     rescue FML::InvalidSpec => e
       expect(e.message).to eq "Invalid YAML. 1:5:found character that cannot start any token while scanning for the next token\n"
     end
@@ -236,10 +297,10 @@ they will be preserved
   it "raises an error for fields that are conditional upon non-yes_no or checkbox fields" do
     yaml = YAML.load(getdata("conditional.yaml"))
     yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["fieldType"] = "text"
-    expect {FML::FMLForm.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
+    expect {FML::Form.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
 
     begin
-      FML::FMLForm.new(yaml.to_yaml)
+      FML::Form.new(yaml.to_yaml)
     rescue FML::InvalidSpec => e
       expect(e.message).to eq "Fields [\"DependsOnRoot\"] depend on field RootQ, which is not a boolean.\nFields may only depend on \"yes_no\" or \"checkbox\" fields, but RootQ is a\n\"text\" field.\n"
     end
@@ -248,10 +309,10 @@ they will be preserved
   it "raises an error for conditionalOn nonexistent field" do
     yaml = YAML.load(getdata("conditional.yaml"))
     yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["conditionalOn"] = "doesnotexist"
-    expect {FML::FMLForm.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
+    expect {FML::Form.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
 
     begin
-      FML::FMLForm.new(yaml.to_yaml)
+      FML::Form.new(yaml.to_yaml)
     rescue FML::InvalidSpec => e
       expect(e.message).to eq "Fields [\"RootQ\"] depend on field doesnotexist, which does not exist\n"
     end
@@ -268,18 +329,18 @@ they will be preserved
     getform("validation.yaml").fill({})
 
     params = {"root" => "true"}
-    expect {getform("validation.yaml").fill(params)}.to raise_exception FML::ValidationErrors
+    expect {getform("validation.yaml").fill(params).validate}.to raise_exception FML::ValidationErrors
 
     begin
-      getform("validation.yaml").fill(params)
+      getform("validation.yaml").fill(params).validate
     rescue FML::ValidationErrors => e
       expect(e.message).to eq "This field is required\n"
     end
 
     params = {"root" => "true", "requiredIfRoot" => "tooshort"}
-    expect {getform("validation.yaml").fill(params)}.to raise_exception FML::ValidationErrors
+    expect {getform("validation.yaml").fill(params).validate}.to raise_exception FML::ValidationErrors
     begin
-      getform("validation.yaml").fill(params)
+      getform("validation.yaml").fill(params).validate
     rescue FML::ValidationErrors => e
       expect(e.message).to eq "Must be longer than 10 characters\n"
     end
@@ -289,9 +350,9 @@ they will be preserved
     # text field does not pass a requiredIf. (validation2.yaml has no minLength
     # validation)
     params = {"root" => "true", "requiredIfRoot" => ""}
-    expect {getform("validation2.yaml").fill(params)}.to raise_exception FML::ValidationErrors
+    expect {getform("validation2.yaml").fill(params).validate}.to raise_exception FML::ValidationErrors
     begin
-      getform("validation2.yaml").fill(params)
+      getform("validation2.yaml").fill(params).validate
     rescue FML::ValidationErrors => e
       expect(e.message).to eq "This field is required\n"
     end
@@ -307,19 +368,7 @@ they will be preserved
     }
     yaml = YAML.load(getdata("simple.yaml"))
     yaml["form"]["fieldsets"][0]["fieldset"][2]["field"]["isRequired"] = "false"
-    json = FML::FMLForm.new(yaml.to_yaml).fill(params).to_json
-  end
-
-  it "should not require a field with isRequired of false" do
-    params = {
-      "sampleCheckbox" => "1",
-      "sampleDate" => "10/10/2014",
-      "sampleTextarea" => "Rick James",
-      "sampleString" => "Lazy brown fox",
-    }
-    yaml = YAML.load(getdata("simple.yaml"))
-    yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["isRequired"] = "false"
-    json = FML::FMLForm.new(yaml.to_yaml).fill(params).to_json
+    json = FML::Form.new(yaml.to_yaml).fill(params).to_json
   end
 
   it "parses a Date" do
@@ -335,10 +384,10 @@ they will be preserved
     expect(form.fieldsets[0][2].date.iso8601).to eq "2014-09-22"
 
     params["sampleDate"] = "invalid date"
-    expect {getform("simple.yaml").fill(params)}.to raise_exception FML::ValidationErrors
+    expect {getform("simple.yaml").fill(params).validate}.to raise_exception FML::ValidationErrors
 
     begin
-      getform("simple.yaml").fill(params)
+      getform("simple.yaml").fill(params).validate
     rescue FML::ValidationErrors => e
       expect(e.message).to eq "Invalid date, must match format %m/%d/%Y\n"
       expect(e.errors[0].debug_message).to eq "Invalid date \"invalid date\" for field \"sampleDate\", expected format \"%m/%d/%Y\"\n"
@@ -360,6 +409,37 @@ they will be preserved
     expect(form.fieldsets[0][0].to_h[:value]).to eq params["date1"]
     expect(form.fieldsets[0][1].to_h[:value]).to eq params["date2"]
     expect(form.fieldsets[0][2].to_h[:value]).to eq params["date3"]
+  end
+
+  it "Allows invalid dates before validation" do
+    params = {
+      "date1" => "mega invalid",
+      "date2" => "mega invalid",
+      "date3" => "mega invalid",
+    }
+    form = getform("date.yaml").fill(params)
+
+    expect(form.fieldsets[0][0].date).to eq nil
+    expect(form.fieldsets[0][1].date).to eq nil
+    expect(form.fieldsets[0][2].date).to eq nil
+
+    expect(form.fieldsets[0][0].to_h[:value]).to eq params["date1"]
+    expect(form.fieldsets[0][1].to_h[:value]).to eq params["date2"]
+    expect(form.fieldsets[0][2].to_h[:value]).to eq params["date3"]
+
+    expect {form.validate}.to raise_exception FML::ValidationErrors
+  end
+
+  it "should not require a field with isRequired of false" do
+    params = {
+      "sampleCheckbox" => "1",
+      "sampleDate" => "10/10/2014",
+      "sampleTextarea" => "Rick James",
+      "sampleString" => "Lazy brown fox",
+    }
+    yaml = YAML.load(getdata("simple.yaml"))
+    yaml["form"]["fieldsets"][0]["fieldset"][0]["field"]["isRequired"] = "false"
+    json = FML::Form.new(yaml.to_yaml).fill(params).to_json
   end
 
   it "saves errors in fields" do

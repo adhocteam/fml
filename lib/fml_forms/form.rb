@@ -1,5 +1,5 @@
 module FML
-  class FMLForm
+  class Form
     attr_reader :form, :title, :version, :fieldsets, :fields
 
     @@validation_classes = {
@@ -8,15 +8,16 @@ module FML
     }
 
     @@field_classes = {
-      "text" => FMLField,
-      "select" => FMLField,
-      "multi-select" => FMLField,
-      "yes_no" => FMLField,
+      "text" => Field,
+      "select" => Field,
+      "multi-select" => Field,
+      "yes_no" => BooleanField,
       "date" => DateField,
-      "time" => FMLField,
-      "checkbox" => FMLField,
-      "string" => FMLField,
-      "radio" => FMLField,
+      "partialdate" => PartialDateField,
+      "time" => Field,
+      "checkbox" => BooleanField,
+      "string" => Field,
+      "radio" => Field,
       "markdown" => MarkdownField,
     }
 
@@ -45,19 +46,20 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
     #
     # Returns self if successful, throws FML::InvalidSpec if not
     def fill(params)
-      errors = []
-
       # update each field's value
       params.each do |field, value|
         if @fields.has_key? field
-          begin
-            @fields[field].value = params[field]
-          rescue ValidationError => e
-            @fields[field].errors << e
-            errors << e
-          end
+          @fields[field].value = params[field]
         end
       end
+
+      self
+    end
+
+    # Validate the form. Returns self if succesful, raises ValidationErrors if
+    # not
+    def validate
+      errors = []
 
       # check required fields
       @fields.each do |name,field|
@@ -67,6 +69,12 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
           e = ValidationError.new(user_msg, debug_msg, field.name)
           errors << e
           field.errors << e
+        end
+
+        begin
+          field.validate
+        rescue ValidationError => e
+          errors << e
         end
       end
 
@@ -104,7 +112,7 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
       form.to_json
     end
 
-    # Turn a json form into yaml and return an FMLForm instance
+    # Turn a json form into yaml and return an Form instance
     def self.from_json(json)
       begin
         json = JSON.parse(json)
@@ -114,7 +122,7 @@ JSON parser raised an error:
 #{e.message}
         EOM
       end
-      FMLForm.new(json.to_yaml)
+      Form.new(json.to_yaml)
     end
 
     private
@@ -193,7 +201,7 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
       params[:label] = poprequired(field, "label")
       params[:prompt] = pop(field, "prompt")
       params[:required] = pop(field, "isRequired")
-
+      params[:format] = pop(field, "format")
 
       # options must be a list of hashes with at least "name" and "value"
       # keys, whose values must be strings
@@ -225,7 +233,6 @@ Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
       params[:validations] = pop(field, "validations")
       params[:value] = pop(field, "value")
       params[:helptext] = pop(field, "helptext")
-      params[:format] = pop(field, "format")
       params[:disable] = pop(field, "disable")
 
       # The remaining kwargs get stuck in the params hash

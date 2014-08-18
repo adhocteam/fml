@@ -6,5 +6,5 @@ def getdata(name)
 end
 
 def getform(name)
-  FML::FMLForm.new(getdata(name))
+  FML::Form.new(getdata(name))
 end

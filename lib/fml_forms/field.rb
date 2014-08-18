@@ -1,7 +1,7 @@
 require 'redcarpet'
 
 module FML
-  class FMLField
+  class Field
     attr_reader :name, :type, :label, :prompt, :required, :options,
       :conditional_on, :validations, :helptext, :disabled, :attrs
 
@@ -24,17 +24,17 @@ module FML
     end
 
     def value=(value)
-      # Convert value to boolean if a checkbox or yes_no field and value is
-      # non-nil
-      if !value.nil? && (@type == "checkbox" || @type == "yes_no")
-        if ["1", "true", "yes", true].index(value).nil?
-          value = false
-        else
-          value = true
-        end
+      # convert empty strings to nil
+      if !value || value == ""
+        @value = nil
+      else
+        @value = value
       end
+    end
 
-      @value = value
+    # raise a ValidationError if there's an invalid value; else do nothing.
+    # ignore the return value.
+    def validate
     end
 
     def required=(value)
@@ -75,7 +75,23 @@ module FML
     def to_s; self.to_h.to_s end
   end
 
-  class DateField<FMLField
+  class BooleanField<Field
+    def value=(value)
+      # Convert value to boolean if a checkbox or yes_no field and value is
+      # non-nil
+      if !value.nil?
+        if ["1", "true", "yes", true].index(value).nil?
+          value = false
+        else
+          value = true
+        end
+      end
+
+      @value = value
+    end
+  end
+
+  class DateField<Field
     attr_accessor :date
 
     def initialize(params)
@@ -98,17 +114,54 @@ module FML
         begin
           @date = Date.strptime value, @format
         rescue ArgumentError
-          debug_message = <<-EOM
+          # Try to generate the date object but ignore failures here; we raise
+          # them in the validate step
+        end
+      end
+    end
+
+    def validate
+      begin
+        @date = Date.strptime value, @format
+      rescue ArgumentError
+        debug_message = <<-EOM
 Invalid date #{value.inspect} for field #{@name.inspect}, expected format #{@format.inspect}
-          EOM
-          user_message = "Invalid date, must match format #{@format}"
-          raise ValidationError.new(user_message, debug_message, @name)
+        EOM
+        user_message = "Invalid date, must match format #{@format}"
+        raise ValidationError.new(user_message, debug_message, @name)
+      end
+    end
+  end
+
+  class PartialDateField<Field
+    attr :day, :month, :year, :unknown, :estimate
+
+    # The value attribute of a PartialDateField is a YAML string with five
+    # optional keys: "day", "month", "year", "unknown", and "estimate"
+    def value=(value)
+      # Date fields are text fields, so "" -> nil
+      if !value || value == ""
+        @value = nil
+      else
+        @value = value
+
+        begin
+          y = YAML.load(value)
+          @day      = y["date"]
+          @month    = y["month"]
+          @year     = y["year"]
+          @unknown  = y["unknown"]
+          @estimate = y["estimate"]
+        rescue
+          # ignore any invalid YAML and continue processing. I wish I could
+          # handle only the exceptions that YAML.load could throw, but there
+          # are many
         end
       end
     end
   end
 
-  class MarkdownField<FMLField
+  class MarkdownField<Field
     def initialize(params)
       # XXX: these are just the default params given in the docs, not sure
       # which options we really want

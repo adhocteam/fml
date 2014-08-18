@@ -10,7 +10,7 @@ describe FML::RequiredIfValidation do
   it "does not allow an empty text field if the parent is true" do
     form = getform("parent_false.yaml")
     params = {"root" => "yes", "requiredifroot" => ""}
-    expect {form.fill(params)}.to raise_exception FML::ValidationErrors
+    expect {form.fill(params).validate}.to raise_exception FML::ValidationErrors
   end
 
   it "does allow any nonempty text field value if the parent is true" do
@@ -26,7 +26,7 @@ describe FML::RequiredIfValidation do
   it "does negative assertions" do
     form = getform("negative_assertion.yaml")
     params = {"root" => "no", "requiredifroot" => ""}
-    expect {form.fill(params)}.to raise_exception FML::ValidationErrors
+    expect {form.fill(params).validate}.to raise_exception FML::ValidationErrors
 
     values = ["something", "!!!", "_"]
     values.each do |value|

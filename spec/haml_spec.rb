@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe FML::HamlAdapter do
-  it "renders an FMLForm into form fields" do
+  it "renders a Form into form fields" do
     f = getform("simple.yaml")
 
     output = FML::HamlAdapter.new(f).render()
@@ -9,7 +9,7 @@ describe FML::HamlAdapter do
     expect(output).to eq expected
   end
 
-  it "renders an FMLForm into a show page" do
+  it "renders a Form into a show page" do
     f = getform("simple.yaml")
 
     output = FML::HamlAdapter.new(f).render_show()
@@ -47,7 +47,7 @@ describe FML::HamlAdapter do
 
   it "correctly uses a view context" do
     form = File.read(File.join(File.dirname(__FILE__), "data", "simple.yaml"))
-    f = FML::FMLForm.new(form)
+    f = FML::Form.new(form)
 
     class Context
       def image_path
