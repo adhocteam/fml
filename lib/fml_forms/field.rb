@@ -80,7 +80,7 @@ module FML
       # Convert value to boolean if a checkbox or yes_no field and value is
       # non-nil
       if !value.nil?
-        if ["1", "true", "yes", true].index(value).nil?
+        if ["1", "true", "yes", "on", true].index(value).nil?
           value = false
         else
           value = true
