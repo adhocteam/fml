@@ -29,7 +29,6 @@ describe FML::Form do
     expect(field.name).to eq "sampleDate"
     expect(field.type).to eq "date"
     expect(field.label).to eq "Pick any date"
-    expect(field.required).to eq true
 
     field = f.fieldsets[0][3]
     expect(field.name).to eq "sampleTextarea"
@@ -383,14 +382,17 @@ they will be preserved
 
     expect(form.fieldsets[0][2].date.iso8601).to eq "2014-09-22"
 
-    params["sampleDate"] = "invalid date"
-    expect {getform("simple.yaml").fill(params).validate}.to raise_exception FML::ValidationErrors
+    invalid_dates = [["invalid date", "\"invalid date\""], [nil, "nil"]]
+    invalid_dates.each do |date, err|
+      params["sampleDate"] = date
+      expect {getform("simple.yaml").fill(params).validate}.to raise_exception FML::ValidationErrors
 
-    begin
-      getform("simple.yaml").fill(params).validate
-    rescue FML::ValidationErrors => e
-      expect(e.message).to eq "Invalid date, must match format %m/%d/%Y\n"
-      expect(e.errors[0].debug_message).to eq "Invalid date \"invalid date\" for field \"sampleDate\", expected format \"%m/%d/%Y\"\n"
+      begin
+        f = getform("simple.yaml").fill(params).validate
+      rescue FML::ValidationErrors => e
+        expect(e.message).to eq "Invalid date, must match format %m/%d/%Y\n"
+        expect(e.errors[0].debug_message).to eq "Invalid date #{err} for field \"sampleDate\", expected format \"%m/%d/%Y\"\n"
+      end
     end
   end
 

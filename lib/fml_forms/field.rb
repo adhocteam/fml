@@ -122,10 +122,10 @@ module FML
 
     def validate
       begin
-        @date = Date.strptime value, @format
-      rescue ArgumentError
+        @date = Date.strptime @value, @format
+      rescue ArgumentError, TypeError
         debug_message = <<-EOM
-Invalid date #{value.inspect} for field #{@name.inspect}, expected format #{@format.inspect}
+Invalid date #{@value.inspect} for field #{@name.inspect}, expected format #{@format.inspect}
         EOM
         user_message = "Invalid date, must match format #{@format}"
         raise ValidationError.new(user_message, debug_message, @name)

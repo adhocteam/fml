@@ -19,7 +19,7 @@ form:
           name: "sampleDate"
           fieldType: "date"
           label: "Pick any date"
-          isRequired: true
+          isRequired: false
       - field:
           name: "sampleTextarea"
           fieldType: "text"
