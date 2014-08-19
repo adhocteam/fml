@@ -3,7 +3,7 @@ require 'spec_helper'
 describe FML::PartialDateField do
   it "takes a YAML value hash" do
     f = FML::PartialDateField.new({})
-    value = "---\nmonth: '8'\nyear: '2012'\nunknown: "
+    value = "---\nmonth: '8'\nyear: '2012'\nunknown: \nestimate: 'on'"
     f.value = value
 
     expect(f.value).to eq value
@@ -11,6 +11,7 @@ describe FML::PartialDateField do
     expect(f.month).to eq '8'
     expect(f.year).to eq '2012'
     expect(f.unknown).to eq nil
+    expect(f.estimate).to eq true
   end
 
   it "ignores invalid yaml" do

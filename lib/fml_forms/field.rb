@@ -73,12 +73,10 @@ module FML
 
     def inspect; self.to_h.to_s end
     def to_s; self.to_h.to_s end
-  end
 
-  class BooleanField<Field
-    def value=(value)
-      # Convert value to boolean if a checkbox or yes_no field and value is
-      # non-nil
+    private
+
+    def to_bool(value)
       if !value.nil?
         if ["1", "true", "yes", "on", true].index(value).nil?
           value = false
@@ -87,7 +85,13 @@ module FML
         end
       end
 
-      @value = value
+      value
+    end
+  end
+
+  class BooleanField<Field
+    def value=(value)
+      @value = to_bool(value)
     end
   end
 
@@ -150,8 +154,8 @@ Invalid date #{@value.inspect} for field #{@name.inspect}, expected format #{@fo
           @day      = y["date"]
           @month    = y["month"]
           @year     = y["year"]
-          @unknown  = y["unknown"]
-          @estimate = y["estimate"]
+          @unknown  = to_bool(y["unknown"])
+          @estimate = to_bool(y["estimate"])
         rescue
           # ignore any invalid YAML and continue processing. I wish I could
           # handle only the exceptions that YAML.load could throw, but there
