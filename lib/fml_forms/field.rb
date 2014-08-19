@@ -159,6 +159,10 @@ Invalid date #{@value.inspect} for field #{@name.inspect}, expected format #{@fo
         end
       end
     end
+
+    def empty?
+      [@day, @month, @year, @unknown, @estimate].map {|x| !x || x == ""}.all?
+    end
   end
 
   class MarkdownField<Field
