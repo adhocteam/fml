@@ -151,7 +151,7 @@ Invalid date #{@value.inspect} for field #{@name.inspect}, expected format #{@fo
 
         begin
           y = YAML.load(value)
-          @day      = y["date"]
+          @day      = y["day"]
           @month    = y["month"]
           @year     = y["year"]
           @unknown  = to_bool(y["unknown"])

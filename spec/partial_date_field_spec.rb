@@ -2,16 +2,25 @@ require 'spec_helper'
 
 describe FML::PartialDateField do
   it "takes a YAML value hash" do
-    f = FML::PartialDateField.new({})
-    value = "---\nmonth: '8'\nyear: '2012'\nunknown: \nestimate: 'on'"
-    f.value = value
+    tests = [
+      ["---\nday: '22'\nmonth: '8'\nyear: '2012'\nunknown: \nestimate: 'on'",
+       ['22', '8', '2012', nil, true]],
+      ["---\nyear: '2012'\nunknown: 'on'\nestimate: ",
+       [nil, nil, '2012', true, nil]],
+    ]
 
-    expect(f.value).to eq value
-    expect(f.day).to eq nil
-    expect(f.month).to eq '8'
-    expect(f.year).to eq '2012'
-    expect(f.unknown).to eq nil
-    expect(f.estimate).to eq true
+    tests.each do |test, expected|
+      f = FML::PartialDateField.new({})
+      f.value = test
+
+      day, month, year, unknown, estimate = expected
+
+      expect(f.value).to eq test
+      expect(f.day).to eq day
+      expect(f.year).to eq year
+      expect(f.unknown).to eq unknown
+      expect(f.estimate).to eq estimate
+    end
   end
 
   it "ignores invalid yaml" do
