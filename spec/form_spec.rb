@@ -50,14 +50,22 @@ describe FML::Form do
     expect(field.required).to eq false
     expect(field.options[0]["name"]).to eq "First"
     expect(field.options[0]["value"]).to eq "1"
+    expect(field.options[0]["ratingCalculator"]).to eq nil
+    expect(field.options[1]["name"]).to eq "Second"
+    expect(field.options[1]["value"]).to eq "2"
+    expect(field.options[1]["ratingCalculator"]).to eq "The Second Thing"
 
     field = f.fieldsets[0][6]
     expect(field.name).to eq "sampleSelect"
     expect(field.type).to eq "select"
     expect(field.label).to eq "Please select one of the following options"
     expect(field.required).to eq false
+    expect(field.options[0]["name"]).to eq "First"
+    expect(field.options[0]["value"]).to eq "1"
+    expect(field.options[0]["ratingCalculator"]).to eq nil
     expect(field.options[1]["name"]).to eq "Second"
     expect(field.options[1]["value"]).to eq "2"
+    expect(field.options[1]["ratingCalculator"]).to eq "The Second Thing"
 
     field = f.fieldsets[0][7]
     expect(field.name).to eq "sampleMarkdown"

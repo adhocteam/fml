@@ -9,6 +9,7 @@ form:
           label: "bananarama"
           isRequired: true
           attribute: "value"
+          ratingCalculator: "Has Diabetes"
       - field:
           name: "sampleCheckbox"
           fieldType: "checkbox"
@@ -41,8 +42,10 @@ form:
               value: "1"
             - name: "Second"
               value: "2"
+              ratingCalculator: "The Second Thing"
             - name: "Third"
               value: "3"
+              ratingCalculator: "The Third Thing"
       - field:
           name: "sampleSelect"
           fieldType: "select"
@@ -53,8 +56,10 @@ form:
               value: "1"
             - name: "Second"
               value: "2"
+              ratingCalculator: "The Second Thing"
             - name: "Third"
               value: "3"
+              ratingCalculator: "The Third Thing"
       - field:
           name: "sampleMarkdown"
           fieldType: "markdown"
@@ -68,3 +73,4 @@ form:
           name: "sampleNumber"
           fieldType: "number"
           label: "Sample Number"
+          ratingCalculator: "Sample Degrees of Flexion"

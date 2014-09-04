@@ -1,21 +1,47 @@
 form:
-  title: "Diabetes milletues evaluation"
+  title: "Diabetes Mellitus Evaluation"
+  version: "1"
   fieldsets:
     - fieldset:
       - field:
-          name: "hasDiabetes"
+          name: "hasDiabetesMellitus"
           fieldType: "yes_no"
-          label: "Does the patient currently have diabetes mellitus?"
+          label: "Does the patient now have or has he/she ever been diagnosed with Diabetes Mellitus?"
           isRequired: true
+          icd9: ""
+          icd10: ""
+          snomed: ""
+      - field:
+          name: "noDiabetesMellitusExplanation"
+          fieldType: "text"
+          label: "Provide a rationale to explain the absence of the diagnosis:"
+          helptext: "e.g. Veteran/Servicemember has never had Diabetes Mellitus. VBA needs this information to explain the absence of the diagnosis to the Veteran/Servicemember. If the patient has never been diagnosed with Diabetes Mellitus, provide any available substantiating normal or negative diagnostic test results or any other information documenting the absence of Diabetes Mellitus."
+          isRequired: false
+          conditionalOn: "!hasDiabetesMellitus"
+          validations:
+            - requiredIf: "!hasDiabetesMellitus"
+      # - field:
+      #     name: "reminder"
+      #     fieldType: "info"
+      #     label: "NOTE: If there are any cardiovascular, psychiatric, eye, skin or skeletal complications attributable to an endocrine condition, ALSO complete appropriate evaluations if indicated."
+      - field:
+          name: "DiabetesMellitusDiagnosisDate"
+          fieldType: "partialdate"
+          label: "Diagnosis Date"
+          helptext: "Enter a specific date if known, or month and year (or year only) if known."
+          isRequired: false
+          conditionalOn: "hasDiabetesMellitus"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
       - field:
           name: "fastingPlasmaGlucoseTest"
           fieldType: "checkbox"
           label: "Fasting plasma glucose test (<abbr>FPG</abbr>) of > 126 MG/DL on two (2) or more occasions?"
           isRequired: false
-          conditionalOn: "hasDiabetes"
+          conditionalOn: "hasDiabetesMellitus"
       - field:
           name: "fastingPlasmaGlucoseOccurence1"
-          fieldType: "date"
+          fieldType: "partialdate"
           label: "Date"
           isRequired: false
           conditionalOn: "fastingPlasmaGlucoseTest"
@@ -23,7 +49,7 @@ form:
             - requiredIf: "fastingPlasmaGlucoseTest"
       - field:
           name: "fastingPlasmaGlucoseOccurence2"
-          fieldType: "date"
+          fieldType: "partialdate"
           label: "Date"
           isRequired: false
           conditionalOn: "fastingPlasmaGlucoseTest"
@@ -34,49 +60,57 @@ form:
           fieldType: "checkbox"
           label: "A1C of 6.5% or greater on two (2) or more occasions?"
           isRequired: false
-          conditionalOn: "hasDiabetes"
+          conditionalOn: "hasDiabetesMellitus"
       - field:
           name: "a1cPercentOccurence1"
-          fieldType: "date"
+          fieldType: "partialdate"
           label: "Date"
           isRequired: false
-          conditionalOn: "fastingPlasmaGlucoseTest"
+          conditionalOn: "a1cPercent"
+          validations:
+            - requiredIf: "a1cPercent"
       - field:
           name: "a1cPercentOccurence2"
-          fieldType: "date"
+          fieldType: "partialdate"
           label: "Date"
           isRequired: false
-          conditionalOn: "fastingPlasmaGlucoseTest"
+          conditionalOn: "a1cPercent"
+          validations:
+            - requiredIf: "a1cPercent"
       - field:
           name: "twoHourPlasma"
           fieldType: "checkbox"
           label: "Two (2) hour plasma glucose of > 200 mg/dl on glucose tolerance test?"
           isRequired: false
-          conditionalOn: "hasDiabetes"
+          conditionalOn: "hasDiabetesMellitus"
       - field:
           name: "twoHourPlasmaOccurence"
-          fieldType: "date"
+          fieldType: "partialdate"
           label: "Date"
           isRequired: false
           conditionalOn: "twoHourPlasma"
+          validations:
+            - requiredIf: "twoHourPlasma"
       - field:
           name: "randomPlasmaGlucose"
           fieldType: "checkbox"
           label: "Random plasma glucose of 200 mg/DL with classic symptoms of hyperglycemia"
           isRequied: false
-          conditionalOn: "hasDiabetes"
+          conditionalOn: "hasDiabetesMellitus"
       - field:
           name: "randomPlasmaGlucoseOccurence"
-          fieldType: "date"
+          fieldType: "partialdate"
           label: "Date"
           isRequired: false
           conditionalOn: "randomPlasmaGlucose"
+          validations:
+            - requiredIf: "randomPlasmaGlucose"
       - field:
           name: "otherTest"
           fieldType: "checkbox"
           label: "Other (please explain)"
           isRequired: false
-          conditionalOn: "hasDiabetes"
+          conditionalOn: "hasDiabetesMellitus"
       - field:
           name: "otherTestExplanation"
           fieldType: "text"
@@ -84,45 +118,254 @@ form:
           isRequired: false
           conditionalOn: "otherTest"
       - field:
-          name: "isManagedByDiet"
+          name: "requiresActivityRegulation"
           fieldType: "yes_no"
-          label: "Is the patient's diabetes managed by diet?"
+          label: "Does the Veteran require regulation of activities as part of medical management of diabetes mellitus?"
+          helptext: "For VA purposes, regulation of activities can be defined as avoidance of strenuous occupational and recreational activities with the intent of avoiding hypoglycemic episodes."
           isRequired: false
-          conditionalOn: "hasDiabetes"
-          disabled: true
+          conditionalOn: "hasDiabetesMellitus"
+          ratingCalculator: "Regulation of activities"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
       - field:
-          name: "requiresOralHypoglycemicAgent"
+          name: "includesStrenuousActivities"
           fieldType: "yes_no"
-          label: "Does the patient's diabetes mellitus require an oral hypoglycemic agent?"
+          label: "Does this regulation include avoidance of strenuous occupational and recreational activities?"
           isRequired: false
-          conditionalOn: "hasDiabetes"
+          conditionalOn: "requiresActivityRegulation"
+          ratingCalculator: "Avoidance of strenuous occupational and recreational activities"
+          validations:
+            - requiredIf: "requiresActivityRegulation"
+      - field:
+          name: "evidenceOfRegulation"
+          fieldType: "text"
+          label: "Please provide one or more examples of how the Veteran must regulate his or her activities:"
+          isRequired: false
+          conditionalOn: "requiresActivityRegulation"
+          validations:
+            - requiredIf: "requiresActivityRegulation"
+      - field:
+          name: "frequencyOfKetoacidosisRequiringCareProviderVisits"
+          fieldType: "select"
+          label: "How frequently does the Veteran require a visit to his or her diabetic care provider for ketoacidosis?"
+          prompt: "Select frequency of documented visits in the last 12 months"
+          isRequired: false
+          options:
+            - name: "Less than twice a month"
+              value: "Less than twice a month"
+            - name: "Twice a month"
+              value: "Episodes of ketoacidosis requiring twice a month visits to a diabetic care provider"
+              ratingCalculator: "Episodes of ketoacidosis requiring twice a month visits to a diabetic care provider"
+            - name: "Weekly"
+              value: "Episodes of ketoacidosis requiring weekly visits to a diabetic care provider"
+              ratingCalculator: "Episodes of ketoacidosis requiring weekly visits to a diabetic care provider"
+          conditionalOn: "hasDiabetesMellitus"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
+      - field:
+          name: "frequencyOfHypoglycemiaRequiringCareProviderVisits"
+          fieldType: "select"
+          label: "How frequently does the Veteran require a visit to his or her diabetic care provider for hypoglycemia?"
+          prompt: "Select frequency of documented visits in the last 12 months"
+          isRequired: false
+          options:
+            - name: "Less than twice a month"
+              value: "Less than twice a month"
+            - name: "Twice a month"
+              value: "Hypoglycemic reactions requiring twice a month visits to a diabetic care provider"
+              ratingCalculator: "Hypoglycemic reactions requiring twice a month visits to a diabetic care provider"
+            - name: "Weekly"
+              value: "Hypoglycemic reactions requiring weekly visits to a diabetic care provider"
+              ratingCalculator: "Hypoglycemic reactions requiring twice a month visits to a diabetic care provider"
+          conditionalOn: "hasDiabetesMellitus"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
+      - field:
+          name: "frequencyOfKetoacidosisRequiringHospitalization"
+          fieldType: "select"
+          label: "How frequently does the Veteran require hospitalization for ketoacidosis?"
+          prompt: "Select frequency of documented hospitalizations in the last 12 months"
+          isRequired: false
+          options:
+            - name: "Zero"
+              value: "Zero"
+            - name: "Once or twice"
+              value: "Episodes of ketoacidosis requiring one or two hospitalizations per year"
+              ratingCalculator: "Episodes of ketoacidosis requiring one or two hospitalizations per year"
+            - name: "Three or more"
+              value: "Episodes of ketoacidosis requiring at least three hospitalizations per year"
+              ratingCalculator: "Episodes of ketoacidosis requiring at least three hospitalizations per year"
+          conditionalOn: "hasDiabetesMellitus"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
+      - field:
+          name: "frequencyOfHypoglycemiaRequiringHospitalization"
+          fieldType: "select"
+          label: "How frequently does the Veteran require hospitalization for hypoglycemia?"
+          prompt: "Select frequency of documented hospitalizations in the last 12 months"
+          isRequired: false
+          options:
+            - name: "Zero"
+              value: "Zero"
+            - name: "Once or twice"
+              value: "Hypoglycemic reactions requiring one or two hospitalizations per year"
+              ratingCalculator: "Hypoglycemic reactions requiring one or two hospitalizations per year"
+            - name: "Three or more"
+              value: "Hypoglycemic reactions requiring at least three hospitalizations per year"
+              ratingCalculator: "Hypoglycemic reactions requiring one or two hospitalizations per year"
+          conditionalOn: "hasDiabetesMellitus"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
       - field:
           name: "requiresInsulin"
           fieldType: "yes_no"
           label: "Does the patient's diabetes mellitus require insulin?"
           isRequired: false
-          conditionalOn: "hasDiabetes"
+          conditionalOn: "hasDiabetesMellitus"
+          ratingCalculator: "Insulin required"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
       - field:
           name: "moreThanOneDailyInjection"
           fieldType: "yes_no"
           label: "More than one injection a day?"
           isRequired: false
           conditionalOn: "requiresInsulin"
+          ratingCalculator: "Requiring more than one daily injection of insulin"
+          validations:
+            - requiredIf: "requiresInsulin"
       - field:
-          name: "requiresActivityRegulation"
+          name: "requiresOralHypoglycemicAgent"
           fieldType: "yes_no"
-          label: "Does the patient's diabetes mellitus require regulation of activities?"
+          label: "Does the patient's diabetes mellitus require an oral hypoglycemic agent?"
           isRequired: false
-          conditionalOn: "hasDiabetes"
+          conditionalOn: "hasDiabetesMellitus"
+          ratingCalculator: "Oral hypoglycemic agent required"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
       - field:
-          name: "includesStrenuousActivities"
+          name: "hasProgressiveLossOfWeightAndStrength"
           fieldType: "yes_no"
-          label: "Does this regulation include avoidance of strenuous occupational and recreational"
+          label: "Has the Veteran had progressive loss of weight and strength attributable to diabetes mellitus?"
           isRequired: false
-          conditionalOn: "requiresActivityRegulation"
+          conditionalOn: "hasDiabetesMellitus"
+          ratingCalculator: "Progressive loss of weight and strength"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
       - field:
-          name: "regulationExplanation"
+          name: "evidenceOfProgressiveLossOfWeightAndStrength"
           fieldType: "text"
-          label: "Please explain how you determined whether the patient requires regulation:"
+          label: "What evidence led you to this conclusion?"
           isRequired: false
-          conditionalOn: "requiresActivityRegulation"
+          conditionalOn: "hasProgressiveLossOfWeightAndStrength"
+          validations:
+            - requiredIf: "hasProgressiveLossOfWeightAndStrength"
+      - field:
+          name: "evidenceOfLossOfWeight"
+          fieldType: "text"
+          label: "Provide percent of loss of individual's baseline weight"
+          helptext: "For VA purposes, baseline weight means the average weight for the two-year period preceding the onset of the disease."
+          isRequired: false
+          conditionalOn: "hasProgressiveLossOfWeightAndStrength"
+          validations:
+            - requiredIf: "hasProgressiveLossOfWeightAndStrength"
+      - field:
+          name: "isManagedByDiet"
+          fieldType: "yes_no"
+          label: "Is the patient's diabetes managed by diet?"
+          helptext: "Per VBA Training Letter XX, all diabetes is managed by diet."
+          isRequired: false
+          value: yes
+          conditionalOn: "hasDiabetesMellitus"
+          disable: true
+      - field:
+          name: "historyOfDiabetesMellitus"
+          fieldType: "text"
+          label: "Describe the history (including onset and course) of the Veteran's Diabetes Mellitus:"
+          prompt: "Brief summary"
+          helptext: "A few concise sentences about the general history and current status of the condition."
+          isRequired: false
+          conditionalOn: "hasDiabetesMellitus"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
+      - field:
+          name: "functionalImpact"
+          fieldType: "yes_no"
+          label: "Does the patient's Diabetes Mellitus impact his or her ability to work?"
+          isRequired: false
+          conditionalOn: "hasDiabetesMellitus"
+          validations:
+            - requiredIf: "hasDiabetesMellitus"
+      - field:
+          name: "functionalImpactDetails"
+          fieldType: "text"
+          label: "Describe the impact, providing one or more examples:"
+          isRequired: false
+          conditionalOn: "functionalImpact"
+          validations:
+            - requiredIf: "functionalImpact"
+      - field:
+          name: "addDPN"
+          fieldType: "checkbox"
+          label: "[BUTTON: ADD DIABETIC PERIPHERAL NEUROPATHY]"
+          isRequired: false
+          conditionalOn: "hasDiabetesMellitus"
+      - field:
+          name: "addDN"
+          fieldType: "checkbox"
+          label: "[BUTTON: ADD DIABETIC NEUROPATHY]"
+          isRequired: false
+          conditionalOn: "hasDiabetesMellitus"
+      - field:
+          name: "addRD"
+          fieldType: "checkbox"
+          label: "[BUTTON: ADD RENAL DYSFUNCTION CAUSED BY DIABETES MELLITUS]"
+          isRequired: false
+          conditionalOn: "hasDiabetesMellitus"
+      - field:
+          name: "addED"
+          fieldType: "checkbox"
+          label: "[BUTTON: ADD ERECTILE DYSFUNCTION]"
+          isRequired: false
+          conditionalOn: "hasDiabetesMellitus"
+      - field:
+          name: "addCC"
+          fieldType: "checkbox"
+          label: "[BUTTON: ADD CARDIAC CONDITIONS]"
+          isRequired: false
+          conditionalOn: "hasDiabetesMellitus"
+      - field:
+          name: "addScars"
+          fieldType: "checkbox"
+          label: "[BUTTON: ADD SCARS]"
+          isRequired: false
+          conditionalOn: "hasDiabetesMellitus"
+      - field:
+          name: "addGP"
+          fieldType: "checkbox"
+          label: "[BUTTON: ADD YOU GET THE POINT]"
+          isRequired: false
+          conditionalOn: "hasDiabetesMellitus"
+      - field:
+          name: "remarks"
+          fieldType: "text"
+          label: "Remarks (if any):"
+          isRequired: false
+      - field:
+          name: "recordsReviewedCFile"
+          fieldType: "checkbox"
+          label: "Reviewed C-file"
+          isRequired: false
+      - field:
+          name: "recordsReviewedOther"
+          fieldType: "checkbox"
+          label: "Reviewed other files/medical records"
+          isRequired: false
+      - field:
+          name: "recordsReviewedOtherDetails"
+          fieldType: "text"
+          label: "Please list other documents you reviewed in preparing this exam:"
+          isRequired: false
+          conditionalOn: "recordsReviewedOther"
+          validations:
+            - requiredIf: "recordsReviewedOther"
