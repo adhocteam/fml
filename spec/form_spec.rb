@@ -9,7 +9,7 @@ describe FML::Form do
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
-    expect(f.fieldsets[0].length).to eq 9
+    expect(f.fieldsets[0].length).to eq 10
 
     field = f.fieldsets[0][0]
     expect(field.name).to eq "hasDiabetes"
@@ -68,6 +68,11 @@ describe FML::Form do
     expect(field.name).to eq "samplePartialDate"
     expect(field.type).to eq "partialdate"
     expect(field.label).to eq "Partial Date"
+
+    field = f.fieldsets[0][9]
+    expect(field.name).to eq "sampleNumber"
+    expect(field.type).to eq "number"
+    expect(field.label).to eq "Sample Number"
   end
 
   it "preserves the value" do
@@ -189,7 +194,7 @@ they will be preserved
     expect(f.title).to eq "Simple sample form"
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
-    expect(f.fieldsets[0].length).to eq 9
+    expect(f.fieldsets[0].length).to eq 10
 
     field = f.fieldsets[0][0]
     expect(field.name).to eq "hasDiabetes"

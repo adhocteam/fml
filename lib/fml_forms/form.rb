@@ -19,6 +19,7 @@ module FML
       "string" => Field,
       "radio" => Field,
       "markdown" => MarkdownField,
+      "number" => NumberField,
     }
 
     def initialize(form)
