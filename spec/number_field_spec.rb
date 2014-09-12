@@ -11,7 +11,7 @@ describe FML::NumberField do
   it "validates a number" do
     invalid_numbers = ["bananas", "43,223", "__2__"]
     invalid_numbers.each do |n|
-      f = FML::NumberField.new({})
+      f = FML::NumberField.new({name: "sampleNumber"})
       f.value = n
 
       # ensure we keep the value before validation
@@ -22,8 +22,9 @@ describe FML::NumberField do
       begin
         f.validate
       rescue FML::ValidationError => e
+        expect(e.field_name).to eq "sampleNumber"
         expect(e.message).to eq "Invalid number \"#{n}\"\n"
-        expect(e.debug_message).to eq "Invalid number \"#{n}\" for field nil\n"
+        expect(e.debug_message).to eq "Invalid number \"#{n}\" for field \"sampleNumber\"\n"
       end
     end
   end

@@ -370,6 +370,27 @@ they will be preserved
     end
   end
 
+  # We had a bug where if the field.validate method fired an error, it
+  # wasn't being included in the field's error array by form.rb
+  it "should include the error if a nuber field fails to validate" do
+    params = {
+      "hasDiabetes" => "yes",
+      "sampleCheckbox" => "0",
+      "sampleDate" => "01/01/2014",
+      "sampleTextarea" => "Rick James",
+      "sampleString" => "Lazy brown fox",
+      "sampleNumber" => "invalid number *** whoa hey ***",
+    }
+    form = getform("simple.yaml").fill(params)
+
+    expect {form.validate}.to raise_exception FML::ValidationErrors
+    begin
+      form = getform("simple.yaml").fill(params).validate
+    rescue FML::ValidationErrors => e
+      expect(e.form.fields["sampleNumber"].errors.length).to eq 1
+    end
+  end
+
   it "should not require a field with isRequired of false" do
     params = {
       "sampleCheckbox" => "1",

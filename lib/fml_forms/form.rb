@@ -76,6 +76,7 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
           field.validate
         rescue ValidationError => e
           errors << e
+          field.errors << e
         end
       end
 
@@ -85,6 +86,7 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
           validation.validate
         rescue ValidationError => e
           errors << e
+          # Validations are responsible for pushing errors into the appropriate field
         end
       end
 
