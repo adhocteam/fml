@@ -14,7 +14,7 @@ form:
           name: "sampleCheckbox"
           fieldType: "checkbox"
           label: "Would you like to check me?"
-          isRequired: true
+          isRequired: false
           conditionalOn: "hasDiabetes"
       - field:
           name: "sampleDate"

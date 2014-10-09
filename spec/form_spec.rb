@@ -22,7 +22,7 @@ describe FML::Form do
     expect(field.name).to eq "sampleCheckbox"
     expect(field.type).to eq "checkbox"
     expect(field.label).to eq "Would you like to check me?"
-    expect(field.required).to eq true
+    expect(field.required).to eq false
     expect(field.conditional_on).to eq "hasDiabetes"
 
     field = f.fieldsets[0][2]
@@ -424,5 +424,18 @@ they will be preserved
     form = getform("yes_no.yaml")
     form.fill({"root" => "yes", "requiredifroot" => "no"})
     expect(form.fields["requiredifroot"].value).to eq false
+  end
+
+  it "should throw an error if a field is conditional and required" do
+    yaml = YAML.load(getdata("simple.yaml"))
+    yaml["form"]["fieldsets"][0]["fieldset"][1]["field"]["isRequired"] = "true"
+
+    expect {FML::Form.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
+
+    begin
+      FML::Form.new(yaml.to_yaml)
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq "Conditional field \"sampleCheckbox\" cannot be required\n"
+    end
   end
 end

@@ -155,6 +155,15 @@ Fields #{dependents.inspect} depend on field #{conditional}, which does not exis
           EOM
         end
 
+        dependents.each do |dependent_name|
+          dependent = @fields[dependent_name]
+          if dependent.required
+            raise InvalidSpec.new(<<-EOM)
+Conditional field #{dependent.name.inspect} cannot be required
+            EOM
+          end
+        end
+
         if ["yes_no", "checkbox"].index(@fields[conditional].type).nil?
           raise InvalidSpec.new(<<-EOM)
 Fields #{dependents.inspect} depend on field #{conditional}, which is not a boolean.
