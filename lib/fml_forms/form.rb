@@ -3,8 +3,14 @@ module FML
     attr_reader :form, :title, :version, :fieldsets, :fields, :bodySystem, :dependent
 
     @@validation_classes = {
-      "requiredIf" => FML::RequiredIfValidation,
+      "requiredIf" => FML::RequiredIfBoolean,
+      "textEquals" => FML::RequiredIfTextEquals,
       "minLength" => FML::MinLengthValidation,
+    }
+
+    @@conditional_classes = {
+      "requiredIf" => FML::RequiredIfBoolean,
+      "textEquals" => FML::RequiredIfTextEquals
     }
 
     @@field_classes = {
@@ -149,31 +155,40 @@ JSON parser raised an error:
       # verify that the type of each field that is depended upon
       # is checkbox or yes_no
       @conditional.each do |conditional,dependents|
-        # if a conditional field starts with !, it's a negative assertion.
-        # Strip the leading ! and allow it to proceed as normal.
-        conditional = conditional[1..-1] if conditional.start_with? "!"
+        dependents.each do |dependent|
+          runner = if conditional.is_a?(String)
+             "requiredIf"
+          else
+            if conditional.keys.length > 1
+              raise InvalidSpec.new(<<-EOM)
+  Fields #{dependents.inspect} can only have one conditionalOn
+              EOM
+            end
+            conditional_type = conditional.keys[0]
+            conditional = conditional[conditional_type]
+            conditional_type
+          end
 
-        if !@fields.has_key?(conditional)
-          raise InvalidSpec.new(<<-EOM)
-Fields #{dependents.inspect} depend on field #{conditional}, which does not exist
-          EOM
-        end
-
-        dependents.each do |dependent_name|
-          dependent = @fields[dependent_name]
-          if dependent.required
+          if @fields[dependent].required
             raise InvalidSpec.new(<<-EOM)
-Conditional field #{dependent.name.inspect} cannot be required
+Conditional field #{dependent.inspect} cannot be required
             EOM
           end
-        end
 
-        if ["yes_no", "checkbox"].index(@fields[conditional].type).nil?
-          raise InvalidSpec.new(<<-EOM)
-Fields #{dependents.inspect} depend on field #{conditional}, which is not a boolean.
-Fields may only depend on "yes_no" or "checkbox" fields, but #{conditional} is a
-#{@fields[conditional].type.inspect} field.
-          EOM
+          if !@@conditional_classes.has_key?(runner)
+            raise InvalidSpec.new("Invalid conditionalOn Type")
+          end
+
+          runner_instance = @@conditional_classes[runner].new(@fields[dependent], conditional, self)
+
+          if runner_instance.parent.nil?
+            raise InvalidSpec.new(<<-EOM)
+Fields #{dependents.inspect} depend on field #{conditional}, which does not exist
+            EOM
+          end
+
+          runner_instance.conforms!
+          @fields[dependent].conditional_on_runner = runner_instance
         end
       end
 

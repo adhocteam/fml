@@ -14,6 +14,16 @@ form:
           conditionalOn: "RootQ"
       - field:
           name: "Tertiary"
-          fieldType: "date"
+          fieldType: "text"
           label: "Depends on Secondary"
           conditionalOn: "!DependsOnRoot"
+      - field:
+          name: "Fourth"
+          fieldType: "text"
+          label: "Depends on Secondary"
+          conditionalOn:
+            textEquals:
+              field: Tertiary
+              values:
+                - "1"
+                - "3"

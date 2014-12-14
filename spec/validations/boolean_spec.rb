@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe FML::RequiredIfValidation do
+describe FML::RequiredIfBoolean do
   it "does not require an answer if the parent field is false" do
     form = getform("parent_false.yaml")
     form.fill({"root" => "no"})

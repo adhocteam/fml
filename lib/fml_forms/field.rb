@@ -5,7 +5,7 @@ module FML
     attr_reader :name, :type, :label, :prompt, :required, :options,
       :conditional_on, :validations, :helptext, :disabled, :attrs
 
-    attr_accessor :value, :errors
+    attr_accessor :value, :errors, :conditional_on_runner
 
     def initialize(params)
       @name = params[:name]
@@ -35,6 +35,13 @@ module FML
     # raise a ValidationError if there's an invalid value; else do nothing.
     # ignore the return value.
     def validate
+    end
+
+    # a field is visible if it's not conditional on anything or the condition
+    # it depends on is satisfied
+    def visible?
+      return true unless @conditional_on
+      @conditional_on_runner.required?
     end
 
     def required=(value)

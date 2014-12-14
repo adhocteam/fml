@@ -1,0 +1,18 @@
+form:
+  title: "Conditional Test"
+  version: "1"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "RootQ"
+          fieldType: "text"
+          label: "The Root Question"
+      - field:
+          name: "DependsOnRoot"
+          fieldType: "checkbox"
+          label: "Secondary"
+          conditionalOn:
+            invalidConditional:
+              field: "wtf"
+              values:
+                - 1
