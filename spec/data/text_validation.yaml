@@ -1,0 +1,42 @@
+form:
+  title: "Simple sample form"
+  version: "1.0"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "root"
+          fieldType: "text"
+          label: "root"
+      - field:
+          name: "requiredifroot"
+          fieldType: "text"
+          label: "Required if root=Bob"
+          validations:
+            - textEquals:
+                field: root
+                value: Bob
+
+      - field:
+          name: "sampleSelect"
+          fieldType: "select"
+          label: "Please select one of the following options"
+          isRequired: false
+          options:
+            - name: "First"
+              value: "1"
+            - name: "Second"
+              value: "2"
+              ratingCalculator: "The Second Thing"
+            - name: "Third"
+              value: "3"
+              ratingCalculator: "The Third Thing"  
+      - field:
+          name: "requiredifsampleselect"
+          fieldType: "text"
+          label: "Required if sampleSelect=XYZ or root=ABC"
+          validations:
+            - textEquals:
+                field: sampleSelect
+                values:
+                  - "1"
+                  - "3"

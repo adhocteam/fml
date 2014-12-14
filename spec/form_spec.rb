@@ -326,6 +326,18 @@ they will be preserved
     rescue FML::InvalidSpec => e
       expect(e.message).to eq "Fields [\"DependsOnRoot\"] depend on field RootQ, which is not a boolean.\nFields may only depend on \"yes_no\" or \"checkbox\" fields, but RootQ is a\n\"text\" field.\n"
     end
+
+  end
+
+  it "raises an error for fields that are inversely conditional upon non-yes_no or checkbox fields" do
+    form = getform("conditional.yaml")
+
+    params = {"RootQ" => "true", "DependsOnRoot" => false, "Tertiary" => "3"}
+    form.fill(params)
+
+    form.fields.each {|name, obj|
+      expect(obj).to be_visible
+    }
   end
 
   it "raises an error for conditionalOn nonexistent field" do
