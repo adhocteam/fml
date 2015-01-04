@@ -187,17 +187,7 @@ Fields #{dependents.inspect} depend on field #{conditional}, which does not exis
             EOM
           end
 
-          if runner == 'requiredIf'
-            cleaned_field = conditional.gsub(/^\!/, '')
-            if ["yes_no", "checkbox"].index(@fields[cleaned_field].type).nil?
-              raise InvalidSpec.new(<<-EOM)
-Fields #{dependents.inspect} depend on field #{cleaned_field}, which is not a boolean.
-Fields may only depend on "yes_no" or "checkbox" fields, but #{cleaned_field} is a
-#{@fields[cleaned_field].type.inspect} field.
-            EOM
-            end
-          end  
-
+          runner_instance.conforms!
           @fields[dependent].conditional_on_runner = runner_instance
         end
       end

@@ -324,7 +324,7 @@ they will be preserved
     begin
       FML::Form.new(yaml.to_yaml)
     rescue FML::InvalidSpec => e
-      expect(e.message).to eq "Fields [\"DependsOnRoot\"] depend on field RootQ, which is not a boolean.\nFields may only depend on \"yes_no\" or \"checkbox\" fields, but RootQ is a\n\"text\" field.\n"
+      expect(e.message).to eq "Field DependsOnRoot depends on field RootQ, which is not a boolean.\nFields may only depend on \"yes_no\" or \"checkbox\" fields, but RootQ is a\n\"text\" field.\n"
     end
 
   end

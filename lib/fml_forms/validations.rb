@@ -31,6 +31,9 @@ module FML
 
   class BaseValidation
     attr_accessor :field, :parent, :form
+
+    def conforms!
+    end
   end
 
   class RequiredIfBoolean < BaseValidation
@@ -46,6 +49,16 @@ module FML
 
       @field = field
       @parent = form.fields[data]
+    end
+
+    def conforms!
+      if ["yes_no", "checkbox"].index(@parent.type).nil?
+        raise InvalidSpec.new(<<-EOM)
+Field #{@field.name} depends on field #{@parent.name}, which is not a boolean.
+Fields may only depend on "yes_no" or "checkbox" fields, but #{@parent.name} is a
+"#{@parent.type}" field.
+      EOM
+      end
     end
 
     def required?
@@ -77,6 +90,16 @@ Field #{@field.name}:#{@field.value.inspect} must be present when #{@parent.name
       @field = field
       @wanted_values = Array(data['value'] || data['values'])
       @parent = form.fields[data['field']]
+    end
+
+    def conforms!
+      if ["select", "text"].index(@parent.type).nil?
+        raise InvalidSpec.new(<<-EOM)
+Field #{@field.name} depends on field #{@parent.name}, which is not a boolean.
+Fields may only depend on "select" or "text" fields, but #{@parent.name} is a
+"#{@parent.type}" field.
+      EOM
+      end
     end
 
     def required?
