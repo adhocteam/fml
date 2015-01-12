@@ -29,7 +29,7 @@ form:
               ratingCalculator: "The Second Thing"
             - name: "Third"
               value: "3"
-              ratingCalculator: "The Third Thing"  
+              ratingCalculator: "The Third Thing"
       - field:
           name: "requiredifsampleselect"
           fieldType: "text"

@@ -118,7 +118,7 @@ Field #{@field.name}:#{@field.value.inspect} must be #{@wanted_values}
         user_message = "when #{@parent.name} is '#{@wanted_values}', #{@field.name} must be filled in"
         err = ValidationError.new(user_message, debug_message, @field.name)
         @field.errors << err
-        raise err     
+        raise err
       end
     end
   end

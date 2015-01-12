@@ -8,7 +8,7 @@ module FML
       "minLength" => FML::MinLengthValidation,
     }
 
-    @@conditional_classes = { 
+    @@conditional_classes = {
       "requiredIf" => FML::RequiredIfBoolean,
       "textEquals" => FML::RequiredIfTextEquals
     }
@@ -156,7 +156,7 @@ JSON parser raised an error:
       # is checkbox or yes_no
       @conditional.each do |conditional,dependents|
         dependents.each do |dependent|
-          runner = if conditional.is_a?(String)       
+          runner = if conditional.is_a?(String)
              "requiredIf"
           else
             if conditional.keys.length > 1
