@@ -27,6 +27,13 @@ module FML
   #     validate that the condition the validation represents is true. Raises
   #     an FML::ValidationError if it's not, otherwise may return anything
   #
+  #  conforms!()
+  #    ensure that the validation is applied to the appropriate type of field.
+  #    raises FML::InvalidSpec  if it's not, otherwise may return anything
+  #
+  #  required?()
+  #    return true if the condition the validation depends on is satisfied
+  #
   # ideas: GreaterThan, LessThan, EarlierThan, LaterThan
 
   class BaseValidation

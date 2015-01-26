@@ -37,6 +37,8 @@ module FML
     def validate
     end
 
+    # a field is visible if it's not conditional on anything or the condition
+    # it depends on is satisfied
     def visible?
       return true unless @conditional_on
       @conditional_on_runner.required?
