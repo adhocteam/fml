@@ -67,6 +67,7 @@ module FML
       h[:conditionalOn] = @conditional_on if !@conditional_on.nil?
       h[:validations] =   @validations if !@validations.nil?
       h[:value] =         @value if !@value.nil?
+      h[:attrs] =         @attrs if !@attrs.nil?
 
       h
     end

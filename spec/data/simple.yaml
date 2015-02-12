@@ -1,6 +1,8 @@
 form:
   title: "Simple sample form"
   version: "1.0"
+  bodySystem: "some_body_system"
+  dependent: "some_body_system"
   fieldsets:
     - fieldset:
       - field:

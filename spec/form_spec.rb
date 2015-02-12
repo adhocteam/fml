@@ -8,6 +8,8 @@ describe FML::Form do
     expect(f.title).to eq "Simple sample form"
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.version).to eq "1.0"
+    expect(f.bodySystem).to eq "some_body_system"
+    expect(f.dependent).to eq "some_body_system"
     expect(f.fieldsets.length).to eq 1
     expect(f.fieldsets[0].length).to eq 10
 
@@ -177,6 +179,8 @@ they will be preserved
     obj = JSON.parse(json)
     expect(obj["form"]["title"]).to eq "Simple sample form"
     expect(obj["form"]["version"]).to eq "1.0"
+    expect(obj["form"]["body_system"]).to eq "some_body_system"
+    expect(obj["form"]["dependent"]).to eq "some_body_system"
     expect(obj["form"]["fieldsets"].length).to eq 1
     expect(obj["form"]["fieldsets"][0].length).to eq 1
 
@@ -186,6 +190,12 @@ they will be preserved
     expect(field["label"]).to eq "bananarama"
     expect(field["isRequired"]).to eq true
     expect(field["value"]).to eq true
+  end
+
+  it "exports attrs with json" do
+    json = getform("simple.yaml").to_json
+    field = JSON.parse(json)["form"]["fieldsets"][0]["fieldset"][0]["field"]
+    expect(field["attrs"]["attribute"]).to eq "value"
   end
 
   it "can load itself from json" do
@@ -249,7 +259,7 @@ they will be preserved
     begin
       getform("duplicate_name.yaml")
     rescue FML::InvalidSpec => e
-      expect(e.message).to eq "Duplicate field name name.\nThis field: {:name=>\"name\", :fieldType=>\"yes_no\", :label=>\"gooseegg\", :isRequired=>false}\nhas the same name as: {:name=>\"name\", :fieldType=>\"checkbox\", :label=>\"bananarama\", :isRequired=>true}\n"
+      expect(e.message).to eq "Duplicate field name name.\nThis field: {:name=>\"name\", :fieldType=>\"yes_no\", :label=>\"gooseegg\", :isRequired=>false, :attrs=>{}}\nhas the same name as: {:name=>\"name\", :fieldType=>\"checkbox\", :label=>\"bananarama\", :isRequired=>true, :attrs=>{}}\n"
     end
   end
 
