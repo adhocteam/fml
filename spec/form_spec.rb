@@ -188,6 +188,12 @@ they will be preserved
     expect(field["value"]).to eq true
   end
 
+  it "exports attrs with json" do
+    json = getform("simple.yaml").to_json
+    field = JSON.parse(json)["form"]["fieldsets"][0]["fieldset"][0]["field"]
+    expect(field["attrs"]["attribute"]).to eq "value"
+  end
+
   it "can load itself from json" do
     params = {
       "hasDiabetes" => "yes",
@@ -249,7 +255,7 @@ they will be preserved
     begin
       getform("duplicate_name.yaml")
     rescue FML::InvalidSpec => e
-      expect(e.message).to eq "Duplicate field name name.\nThis field: {:name=>\"name\", :fieldType=>\"yes_no\", :label=>\"gooseegg\", :isRequired=>false}\nhas the same name as: {:name=>\"name\", :fieldType=>\"checkbox\", :label=>\"bananarama\", :isRequired=>true}\n"
+      expect(e.message).to eq "Duplicate field name name.\nThis field: {:name=>\"name\", :fieldType=>\"yes_no\", :label=>\"gooseegg\", :isRequired=>false, :attrs=>{}}\nhas the same name as: {:name=>\"name\", :fieldType=>\"checkbox\", :label=>\"bananarama\", :isRequired=>true, :attrs=>{}}\n"
     end
   end
 
