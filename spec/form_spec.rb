@@ -8,7 +8,7 @@ describe FML::Form do
     expect(f.title).to eq "Simple sample form"
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.version).to eq "1.0"
-    expect(f.body_system).to eq "some_body_system"
+    expect(f.bodySystem).to eq "some_body_system"
     expect(f.dependent).to eq "some_body_system"
     expect(f.fieldsets.length).to eq 1
     expect(f.fieldsets[0].length).to eq 10
