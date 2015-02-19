@@ -9,7 +9,3 @@ require 'fml_forms/version'
 RSpec::Core::RakeTask.new(:spec)
 
 task :default => :spec
-
-task :deploy => :build do
-  sh "gem inabox pkg/fml_forms-#{FML::VERSION}.gem"
-end
