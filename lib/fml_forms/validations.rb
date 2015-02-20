@@ -64,7 +64,7 @@ module FML
 Field #{@field.name} depends on field #{@parent.name}, which is not a boolean.
 Fields may only depend on "yes_no" or "checkbox" fields, but #{@parent.name} is a
 "#{@parent.type}" field.
-      EOM
+        EOM
       end
     end
 
@@ -105,7 +105,7 @@ Field #{@field.name}:#{@field.value.inspect} must be present when #{@parent.name
 Field #{@field.name} depends on field #{@parent.name}, which is not a boolean.
 Fields may only depend on "select" or "text" fields, but #{@parent.name} is a
 "#{@parent.type}" field.
-      EOM
+        EOM
       end
     end
 

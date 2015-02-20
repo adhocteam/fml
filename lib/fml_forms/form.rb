@@ -162,7 +162,7 @@ JSON parser raised an error:
             if conditional.keys.length > 1
               raise InvalidSpec.new(<<-EOM)
   Fields #{dependents.inspect} can only have one conditionalOn
-            EOM
+              EOM
             end
             conditional_type = conditional.keys[0]
             conditional = conditional[conditional_type]
