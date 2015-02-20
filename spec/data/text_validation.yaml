@@ -1,5 +1,5 @@
 form:
-  title: "Simple sample form"
+  title: "Text Validation Example"
   version: "1.0"
   fieldsets:
     - fieldset:
@@ -15,7 +15,6 @@ form:
             - textEquals:
                 field: root
                 value: Bob
-
       - field:
           name: "sampleSelect"
           fieldType: "select"
