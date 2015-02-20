@@ -102,7 +102,7 @@ Field #{@field.name}:#{@field.value.inspect} must be present when #{@parent.name
     def conforms!
       if ["select", "text"].index(@parent.type).nil?
         raise InvalidSpec.new(<<-EOM)
-Field #{@field.name} depends on field #{@parent.name}, which is not a boolean.
+Field #{@field.name} depends on field #{@parent.name}, which is not a text field.
 Fields may only depend on "select" or "text" fields, but #{@parent.name} is a
 "#{@parent.type}" field.
         EOM
