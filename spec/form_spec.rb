@@ -179,7 +179,7 @@ they will be preserved
     obj = JSON.parse(json)
     expect(obj["form"]["title"]).to eq "Simple sample form"
     expect(obj["form"]["version"]).to eq "1.0"
-    expect(obj["form"]["body_system"]).to eq "some_body_system"
+    expect(obj["form"]["bodySystem"]).to eq "some_body_system"
     expect(obj["form"]["dependent"]).to eq "some_body_system"
     expect(obj["form"]["fieldsets"].length).to eq 1
     expect(obj["form"]["fieldsets"][0].length).to eq 1
