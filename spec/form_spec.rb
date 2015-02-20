@@ -329,6 +329,17 @@ they will be preserved
 
   end
 
+  it "raises an error for fields that have invalid conditional names" do
+    yaml = YAML.load(getdata("invalid_conditional.yaml"))
+    expect {FML::Form.new(yaml.to_yaml)}.to raise_exception FML::InvalidSpec
+
+    begin
+      FML::Form.new(yaml.to_yaml)
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq "Invalid conditionalOn Type"
+    end
+  end
+
   it "raises an error for fields that are inversely conditional upon non-yes_no or checkbox fields" do
     form = getform("conditional.yaml")
 
