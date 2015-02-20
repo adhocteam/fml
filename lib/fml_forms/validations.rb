@@ -29,10 +29,12 @@ module FML
   #
   #   conforms!()
   #     ensure that the validation is applied to the appropriate type of field.
-  #     raises FML::InvalidSpec  if it's not, otherwise may return anything
+  #     raises FML::InvalidSpec  if it's not, otherwise may return anything.
   #
   #   required?()
-  #     return true if the condition the validation depends on is satisfied
+  #     return true if the condition the validation depends on is satisfied.
+  #     This field is required only for validations in form.rb's
+  #     @@conditional_classes
   #
   # ideas: GreaterThan, LessThan, EarlierThan, LaterThan
 
@@ -134,10 +136,6 @@ Field #{@field.name}:#{@field.value.inspect} must be #{@wanted_values}
     def initialize(field, data, form)
       @field = field
       @minlength = data
-    end
-
-    def required?
-      false
     end
 
     def valid?
