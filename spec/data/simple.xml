@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Evaluation>
-  <title>Simple sample form</title>
-  <version>1.0</version>
-  <hasDiabetes ratingCalculator="Has Diabetes">true</hasDiabetes>
-  <sampleSelect ratingCalculator="The Second Thing">true</sampleSelect>
-  <sampleSelect ratingCalculator="The Third Thing">true</sampleSelect>
-  <sampleNumber ratingCalculator="Sample Degrees of Flexion">3.6</sampleNumber>
-</Evaluation>
