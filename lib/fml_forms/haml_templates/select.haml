@@ -1,7 +1,0 @@
-.row
-  .small-12.columns
-    %label{for: field.name} #{field.label}
-    %select
-      - field.options.each do |option|
-        %option{value: option["value"]}
-          = option["name"]
