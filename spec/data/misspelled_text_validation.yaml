@@ -1,0 +1,17 @@
+form:
+  title: "Text Validation Example"
+  version: "1.0"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "root"
+          fieldType: "text"
+          label: "root"
+      - field:
+          name: "requiredifroot"
+          fieldType: "text"
+          label: "Required if root=Bob"
+          validations:
+            - textEquals:
+                field: rootssss
+                value: Bob
