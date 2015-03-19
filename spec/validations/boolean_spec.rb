@@ -37,7 +37,7 @@ describe FML::RequiredIfBoolean do
     end
   end
 
-  it "gives a nice error on a misspelled field", focus: true do
+  it "gives a nice error on a misspelled field" do
     expect {getform("misspeeled_required_if.yaml")}.to raise_exception FML::InvalidSpec
     begin
       getform("misspeeled_required_if.yaml")
