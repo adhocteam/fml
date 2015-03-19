@@ -46,18 +46,25 @@ module FML
   end
 
   class RequiredIfBoolean < BaseValidation
-    def initialize(field, data, form)
+    def initialize(field, required_field_name, form)
       @form = form
-      @negative = data.start_with? "!"
+      @negative = required_field_name.start_with? "!"
       # If the assertion is negative, we require the parent to be true, and
       # vice versa
       @required = !@negative
 
       # strip the ! if there was one
-      data = data[1..-1] if @negative
+      required_field_name = required_field_name[1..-1] if @negative
 
       @field = field
-      @parent = form.fields[data]
+
+      if !form.fields.has_key? required_field_name
+        raise InvalidSpec.new(<<-EOM)
+Invalid field name in requiredIf validation: #{required_field_name}
+from field: #{field}
+EOM
+      end
+      @parent = form.fields[required_field_name]
     end
 
     def conforms!
