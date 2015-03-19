@@ -181,12 +181,6 @@ Conditional field #{dependent.inspect} cannot be required
 
           runner_instance = @@conditional_classes[runner].new(@fields[dependent], conditional, self)
 
-          if runner_instance.parent.nil?
-            raise InvalidSpec.new(<<-EOM)
-Fields #{dependents.inspect} depend on field #{conditional}, which does not exist
-            EOM
-          end
-
           runner_instance.conforms!
           @fields[dependent].conditional_on_runner = runner_instance
         end
