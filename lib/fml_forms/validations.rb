@@ -105,6 +105,14 @@ Field #{@field.name}:#{@field.value.inspect} must be present when #{@parent.name
     def initialize(field, data, form)
       @field = field
       @wanted_values = Array(data['value'] || data['values'])
+
+      if !form.fields.has_key? data['field']
+        raise InvalidSpec.new(<<-EOM)
+Invalid field name in requiredIf validation: #{data['field']}
+from field: #{field}
+EOM
+      end
+
       @parent = form.fields[data['field']]
     end
 
