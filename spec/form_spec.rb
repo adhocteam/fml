@@ -359,7 +359,10 @@ they will be preserved
     begin
       FML::Form.new(yaml.to_yaml)
     rescue FML::InvalidSpec => e
-      expect(e.message).to eq "Fields [\"RootQ\"] depend on field doesnotexist, which does not exist\n"
+      expect(e.message).to eq <<-EOM
+Invalid field name in requiredIf validation: doesnotexist
+from field: {:name=>"RootQ", :fieldType=>"yes_no", :label=>"The Root Question", :isRequired=>false, :conditionalOn=>"doesnotexist", :attrs=>{}}
+EOM
     end
   end
 

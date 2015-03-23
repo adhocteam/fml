@@ -31,4 +31,15 @@ describe FML::RequiredIfTextEquals do
     end
   end
 
+  it "gives a nice error on a misspelled field" do
+    expect {getform("misspelled_text_validation.yaml")}.to raise_exception FML::InvalidSpec
+    begin
+      getform("misspelled_text_validation.yaml")
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq <<-EOM
+Invalid field name in requiredIf validation: rootssss
+from field: {:name=>"requiredifroot", :fieldType=>"text", :label=>"Required if root=Bob", :isRequired=>false, :validations=>[{"textEquals"=>{"field"=>"rootssss", "value"=>"Bob"}}], :attrs=>{}}
+EOM
+    end
+  end
 end

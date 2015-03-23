@@ -36,4 +36,16 @@ describe FML::RequiredIfBoolean do
       expect(form.fields["requiredifroot"].value).to eq value
     end
   end
+
+  it "gives a nice error on a misspelled field" do
+    expect {getform("misspeeled_required_if.yaml")}.to raise_exception FML::InvalidSpec
+    begin
+      getform("misspeeled_required_if.yaml")
+    rescue FML::InvalidSpec => e
+      expect(e.message).to eq <<-EOM
+Invalid field name in requiredIf validation: rootsssss
+from field: {:name=>"requiredifroot", :fieldType=>"text", :label=>"Required if root (but misspelled)", :isRequired=>false, :validations=>[{"requiredIf"=>"rootsssss"}], :attrs=>{}}
+EOM
+    end
+  end
 end
