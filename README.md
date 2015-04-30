@@ -260,54 +260,6 @@ A text field for entering a numeric value
 
 A field with static content to be displayed to the user, useful for notes or instructions
 
-### 1.0.7 The ratingCalculator Attribute
-
-The ratingCalculator attribute marks a field or option as corresponding directly to a rating calculator field. The value of the attribute should be the text of that field.
-
-For example, if a number field "weight" corresponds to a “weight” field on a rating calculator, it might look like:
-
-- field:
-
-  name: "weight"
-
-  fieldType: "number"
-
-  label: "Weight"
-
-  ratingCalculator: "weight"
-
-A ratingCalculator field may also be present on the options available in a select or radio field. For example, if a rating calculator had two fields, once for "hospitalized once in the previous year" and another for “hospitalized more than once in the previous year”, a select box mapping to those fields might look like:
-
-- field:
-
-  name: "hospitalized"
-
-  fieldType: "select"
-
-  label: "how often was the patient hospitalized for this condition in the last year?"
-
-  options:
-
-    - name: "zero"
-
-      value: "Zero Times"
-
-    - name: "once"
-
-      value: "Once"
-
-      ratingCalculator: "hospitalized once in the previous year"
-
-    - name: "more"
-
-      value: "More than once"
-
-      ratingCalculator: "hospitalized more than once in the previous year"
-
-Note that the "zero" option has no ratingCalculator attribute; it will not be sent to VBMS in the XML, because it does not correspond to anything in the rating calculator.
-
-Any field which does not have a ratingCalculator attribute defined on itself, or on one of its options, will not be sent to VBMS.
-
 ## 1.1 Example YAML FML document
 
 form:
