@@ -16,7 +16,7 @@ module FML
     @@field_classes = {
       "text" => Field,
       "select" => Field,
-      "multi-select" => Field,
+      "multiselect" => Field,
       "yes_no" => BooleanField,
       "date" => DateField,
       "partialdate" => PartialDateField,
