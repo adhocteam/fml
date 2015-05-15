@@ -6,6 +6,7 @@ describe FML::Form do
 
     f = FML::Form.new(form)
     expect(f.title).to eq "Simple sample form"
+    expect(f.id).to eq "0acd2dc0b8b325eb5698e50387b79d00d77b1f10"
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.version).to eq "1.0"
     expect(f.bodySystem).to eq "some_body_system"
@@ -210,6 +211,7 @@ they will be preserved
 
     f = FML::Form.from_json(json)
     expect(f.title).to eq "Simple sample form"
+    expect(f.id).to eq "0acd2dc0b8b325eb5698e50387b79d00d77b1f10"
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
     expect(f.fieldsets[0].length).to eq 10
