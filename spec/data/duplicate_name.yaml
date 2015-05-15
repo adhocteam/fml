@@ -1,5 +1,6 @@
 form:
   title: "Invalid Spec - duplicate name"
+  id: acf835b53a9a2528c34979b63412ed16bbbdfe5e
   version: "1.0"
   fieldsets:
     - fieldset:
