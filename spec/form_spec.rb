@@ -273,7 +273,8 @@ they will be preserved
 
     expect {form.fill(params).validate}.to raise_exception FML::ValidationErrors
     begin
-      form.fill({})
+      form.fill(params).validate
+      1/0
     rescue FML::ValidationErrors => e
       expect(e.errors.length).to eq 1
       expect(e.message).to eq "This Field is Required\n"
