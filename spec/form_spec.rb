@@ -447,15 +447,16 @@ EOM
       "hasDiabetes" => "yes",
       "sampleCheckbox" => "0",
       "sampleDate" => "",
-      "sampleTextarea" => "Rick James",
+      "sampleTextarea" => "",
       "sampleString" => "Lazy brown fox",
     }
     begin
       form = getform("simple.yaml")
-      form.fill(params)
+      form.fill(params).validate
+      1/0
     rescue FML::ValidationErrors => e
-      expect(form.fields["sampleDate"].errors.length).to eq 1
-      expect(form.fields["sampleDate"].errors[0]).to be_a FML::ValidationError
+      expect(form.fields["sampleTextarea"].errors.length).to eq 1
+      expect(form.fields["sampleTextarea"].errors[0]).to be_a FML::ValidationError
     end
   end
 
