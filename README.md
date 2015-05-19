@@ -10,7 +10,7 @@ To run the tests just run `bundle install` then `rake`
 
 Add this line to your application's Gemfile:
 
-    gem 'fmlforms'
+    gem 'fml_forms'
 
 And then execute:
 
@@ -18,7 +18,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install fmlforms
+    $ gem install fml_forms
 
 ## Form Markup Language Spec
 
