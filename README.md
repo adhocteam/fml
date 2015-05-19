@@ -26,8 +26,6 @@ The Form Markup Language defines a syntax for representing a form. The intention
 
 The FML spec may be implemented in either YAML or JSON; what’s important are the fields, their values, and their relationships.
 
-[[TOC]]
-
 ## 1.0 FML Elements
 
 ### 1.0.1 form
