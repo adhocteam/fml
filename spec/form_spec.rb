@@ -6,6 +6,7 @@ describe FML::Form do
 
     f = FML::Form.new(form)
     expect(f.title).to eq "Simple sample form"
+    expect(f.id).to eq "0acd2dc0b8b325eb5698e50387b79d00d77b1f10"
     expect(f.form).to eq YAML.load(form)["form"]
     expect(f.version).to eq "1.0"
     expect(f.bodySystem).to eq "some_body_system"
@@ -210,6 +211,7 @@ they will be preserved
 
     f = FML::Form.from_json(json)
     expect(f.title).to eq "Simple sample form"
+    expect(f.id).to eq "0acd2dc0b8b325eb5698e50387b79d00d77b1f10"
     expect(f.version).to eq "1.0"
     expect(f.fieldsets.length).to eq 1
     expect(f.fieldsets[0].length).to eq 10
@@ -271,7 +273,8 @@ they will be preserved
 
     expect {form.fill(params).validate}.to raise_exception FML::ValidationErrors
     begin
-      form.fill({})
+      form.fill(params).validate
+      1/0
     rescue FML::ValidationErrors => e
       expect(e.errors.length).to eq 1
       expect(e.message).to eq "This Field is Required\n"
@@ -444,15 +447,16 @@ EOM
       "hasDiabetes" => "yes",
       "sampleCheckbox" => "0",
       "sampleDate" => "",
-      "sampleTextarea" => "Rick James",
+      "sampleTextarea" => "",
       "sampleString" => "Lazy brown fox",
     }
     begin
       form = getform("simple.yaml")
-      form.fill(params)
+      form.fill(params).validate
+      1/0
     rescue FML::ValidationErrors => e
-      expect(form.fields["sampleDate"].errors.length).to eq 1
-      expect(form.fields["sampleDate"].errors[0]).to be_a FML::ValidationError
+      expect(form.fields["sampleTextarea"].errors.length).to eq 1
+      expect(form.fields["sampleTextarea"].errors[0]).to be_a FML::ValidationError
     end
   end
 

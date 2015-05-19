@@ -1,6 +1,6 @@
 module FML
   class Form
-    attr_reader :form, :title, :version, :fieldsets, :fields, :bodySystem, :dependent
+    attr_reader :form, :title, :id, :version, :fieldsets, :fields, :bodySystem, :dependent
 
     @@validation_classes = {
       "requiredIf" => FML::RequiredIfBoolean,
@@ -107,6 +107,7 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
       form = {
         form: {
           title: @title,
+          id: @id,
           version: @version,
           bodySystem: @bodySystem,
           dependent: @dependent,
@@ -140,6 +141,7 @@ JSON parser raised an error:
 
     def parse(yaml)
       @form = getrequired(yaml, "form")
+      @id = getrequired(@form, "id")
       @title = getrequired(@form, "title")
       @version = getrequired(@form, "version")
       @bodySystem = @form["bodySystem"]

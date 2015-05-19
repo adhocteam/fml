@@ -1,5 +1,6 @@
 form:
   title: "Simple sample form"
+  id: ad4ba1b2ed5452be29572d3f8b9965a348017a90
   version: "1.0"
   fieldsets:
     - fieldset:

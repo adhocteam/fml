@@ -10,7 +10,7 @@ To run the tests just run `bundle install` then `rake`
 
 Add this line to your application's Gemfile:
 
-    gem 'fmlforms'
+    gem 'fml_forms'
 
 And then execute:
 
@@ -18,15 +18,13 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install fmlforms
+    $ gem install fml_forms
 
 ## Form Markup Language Spec
 
 The Form Markup Language defines a syntax for representing a form. The intention is that a non-technical user can look at an existing digital or paper form and use this markup to create a form specification that the FML app will automatically render into a form.
 
 The FML spec may be implemented in either YAML or JSON; what’s important are the fields, their values, and their relationships.
-
-[[TOC]]
 
 ## 1.0 FML Elements
 

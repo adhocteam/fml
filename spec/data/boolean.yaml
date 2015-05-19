@@ -1,5 +1,6 @@
 form:
   title: "Bool test"
+  id: 7e6f5289d887d8afb01b17e044e9c148f4b8d4e5
   version: "1"
   fieldsets:
     - fieldset:

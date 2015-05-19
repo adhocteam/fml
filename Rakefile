@@ -9,3 +9,4 @@ require 'fml_forms/version'
 RSpec::Core::RakeTask.new(:spec)
 
 task :default => :spec
+task :test => :spec
