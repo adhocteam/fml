@@ -75,6 +75,8 @@ module FML
       h[:validations] =   @validations if !@validations.nil?
       h[:value] =         @value if !@value.nil?
       h[:attrs] =         @attrs if !@attrs.nil?
+      h[:helptext] =      @helptext if !@helptext.nil?
+      h[:disabled] =      @disabled if !@disabled.nil?
 
       h
     end
