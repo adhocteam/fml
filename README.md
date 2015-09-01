@@ -94,7 +94,7 @@ Sub-element to **fieldset**.  It has the following sub-elements:
   <tr>
     <td>fieldType</td>
     <td>string</td>
-    <td>The type of the field.  Can be [checkbox, string, text, select, multiselect, yes_no, date, time, markdown].  More will be defined in the future.</td>
+    <td>The type of the field.  Can be [checkbox, string, text, number, select, multiselect, yes_no, date, time, markdown].  More will be defined in the future.</td>
     <td>yes</td>
   </tr>
   <tr>
