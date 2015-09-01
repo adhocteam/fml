@@ -94,7 +94,7 @@ Sub-element to **fieldset**.  It has the following sub-elements:
   <tr>
     <td>fieldType</td>
     <td>string</td>
-    <td>The type of the field.  Can be [checkbox, string, text, number, select, multiselect, yes_no, date, time, markdown].  More will be defined in the future.</td>
+    <td>The type of the field.  Can be [checkbox, string, text, number, select, multiselect, yes_no, date, time, markdown, radio].  More will be defined in the future.</td>
     <td>yes</td>
   </tr>
   <tr>
@@ -258,6 +258,10 @@ A text field for entering a numeric value
 
 A field with static content to be displayed to the user, useful for notes or instructions
 
+#### 1.0.6.8 Radio
+
+A series of radio buttons. Options should be listed as name/value pairs under the "options" key.
+
 ## 1.1 Example YAML FML document
 
 form:
@@ -375,6 +379,30 @@ form:
           label: "Zip code"
 
           isRequired: true
+
+      - field:
+
+          name: "address_type"
+
+          fieldType: "radio"
+
+          label: "Address Type"
+
+          isRequired: false
+
+          options:
+
+            - name: "home"
+
+              value: "Single Family Home"
+
+            - name: "apartment"
+
+              value: "Apartment Building"
+
+            - name: "condo"
+
+              value: "Condominium"
 
 ## 1.2 Example JSON FML Document
 
