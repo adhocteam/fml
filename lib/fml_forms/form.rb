@@ -26,6 +26,7 @@ module FML
       "radio" => Field,
       "markdown" => MarkdownField,
       "number" => NumberField,
+      "integer" => IntegerField,
     }
 
     def initialize(form)
@@ -319,7 +320,7 @@ has the same name as: #{@fields[params[:name]].to_s}
     attr :debug_message, :field_name
     def initialize(user_message, debug_message, field_name)
       user_message += "\n" if !user_message.end_with? "\n"
-      debug_message += "\n" if !user_message.end_with? "\n"
+      debug_message += "\n" if !debug_message.end_with? "\n"
 
       super(user_message)
       @debug_message = debug_message

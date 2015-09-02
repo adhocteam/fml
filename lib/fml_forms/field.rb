@@ -126,8 +126,7 @@ module FML
         begin
           @number = Float(value)
         rescue ArgumentError
-          # Try to generate the date object but ignore failures here; we raise
-          # them in the validate step
+          # ignore failures here; we raise them in the validate step
         end
       end
     end
@@ -141,6 +140,47 @@ module FML
 Invalid number #{@value.inspect} for field #{@name.inspect}
           EOM
           user_message = "Invalid number #{@value.inspect}"
+          raise ValidationError.new(user_message, debug_message, @name)
+        end
+      end
+    end
+  end
+
+  class IntegerField<Field
+    attr_accessor :number
+
+    def initialize(params)
+      @number = nil
+
+      super(params)
+    end
+
+    def value=(value)
+      # Number fields are text fields, so "" -> nil
+      if !value || value == ""
+        @value = nil
+      else
+        # we want to save the value even if it doesn't parse; we still need
+        # to fill it in for the user
+        @value = value
+
+        begin
+          @number = Integer(value, 10)
+        rescue ArgumentError
+          # ignore failures here; we raise them in the validate step
+        end
+      end
+    end
+
+    def validate
+      if @value
+        begin
+          @number = Integer(@value, 10)
+        rescue ArgumentError, TypeError
+          debug_message = <<-EOM
+Invalid integer #{@value.inspect} for field #{@name.inspect}
+          EOM
+          user_message = "Invalid integer #{@value.inspect}"
           raise ValidationError.new(user_message, debug_message, @name)
         end
       end
