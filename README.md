@@ -94,7 +94,7 @@ Sub-element to **fieldset**.  It has the following sub-elements:
   <tr>
     <td>fieldType</td>
     <td>string</td>
-    <td>The type of the field.  Can be [checkbox, string, text, number, select, multiselect, yes_no, date, time, markdown, radio].  More will be defined in the future.</td>
+    <td>The type of the field.  Can be [checkbox, string, text, number, integer, select, multiselect, yes_no, date, time, markdown, radio].  More will be defined in the future.</td>
     <td>yes</td>
   </tr>
   <tr>
@@ -254,13 +254,17 @@ A list from which the user may choose one or more elements. Options should be li
 
 A text field for entering a numeric value
 
-#### 1.0.6.7 Markdown
+#### 1.0.6.8 Markdown
 
 A field with static content to be displayed to the user, useful for notes or instructions
 
-#### 1.0.6.8 Radio
+#### 1.0.6.9 Radio
 
 A series of radio buttons. Options should be listed as name/value pairs under the "options" key.
+
+#### 1.0.6.10 Integer
+
+A text field for entering an integer value. Rejects all other numbers.
 
 ## 1.1 Example YAML FML document
 
