@@ -1,6 +1,6 @@
 module FML
   class Form
-    attr_reader :form, :title, :id, :version, :fieldsets, :fields, :bodySystem, :dependent
+    attr_reader :form, :title, :id, :version, :fieldsets, :fields, :bodySystem, :dependent, :attrs
 
     @@validation_classes = {
       "requiredIf" => FML::RequiredIfBoolean,
@@ -33,6 +33,8 @@ module FML
       # @fields stores the fields from all fieldsets by name. Helps ensure that
       # we don't reuse names
       @fields = {}
+
+      @attrs = {}
 
       # @conditional stores the field dependencies. Each key is an array of the
       # fields that depend on it.
@@ -142,18 +144,26 @@ JSON parser raised an error:
 
     def parse(yaml)
       @form = getrequired(yaml, "form")
-      @id = getrequired(@form, "id")
-      @title = getrequired(@form, "title")
-      @version = getrequired(@form, "version")
-      @bodySystem = @form["bodySystem"]
-      @dependent = @form["dependent"]
+
+      # We're going to perform destructive edits, so copy the form. Keep in
+      # mind that clone only performs a copy of the first level of the form
+      # hash, so don't alter anything past the first level.
+      form = @form.clone
+      @id = poprequired(form, "id")
+      @title = poprequired(form, "title")
+      @version = poprequired(form, "version")
+      @bodySystem = pop(form, "bodySystem")
+      @dependent = pop(form, "dependent")
 
       # @fieldsets is just a list of lists of fields
-      @fieldsets = getrequired(@form, "fieldsets").collect do |fieldset|
+      @fieldsets = poprequired(form, "fieldsets").collect do |fieldset|
         getrequired(fieldset, "fieldset").collect do |field|
           parsefield(field)
         end
       end
+
+      # any attributes remaining get stored in the attrs hash
+      @attrs = form
 
       # verify that the type of each field that is depended upon
       # is checkbox or yes_no
