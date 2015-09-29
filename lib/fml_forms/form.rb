@@ -114,6 +114,7 @@ Invalid YAML. #{e.line}:#{e.column}:#{e.problem} #{e.context}
           version: @version,
           bodySystem: @bodySystem,
           dependent: @dependent,
+          attrs: @attrs,
           fieldsets: []
         }
       }
@@ -154,6 +155,7 @@ JSON parser raised an error:
       @version = poprequired(form, "version")
       @bodySystem = pop(form, "bodySystem")
       @dependent = pop(form, "dependent")
+      @attrs = pop(form, "attrs")
 
       # @fieldsets is just a list of lists of fields
       @fieldsets = poprequired(form, "fieldsets").collect do |fieldset|
@@ -163,7 +165,7 @@ JSON parser raised an error:
       end
 
       # any attributes remaining get stored in the attrs hash
-      @attrs = form
+      @attrs = @attrs ? @attrs.merge(form) : form
 
       # verify that the type of each field that is depended upon
       # is checkbox or yes_no
