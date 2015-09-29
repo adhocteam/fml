@@ -486,4 +486,17 @@ EOM
 
     expect(form.attrs["some_attribute"]).to eq "something"
   end
+
+  it "exports attrs from to_json" do
+    form = getform("form_attributes.yaml")
+    obj = JSON.load(form.to_json)
+
+    expect(obj["form"]["attrs"]).to eq({"some_attribute" => "something"})
+  end
+
+  it "loads attrs from json" do
+    form = FML::Form.from_json(getform("form_attributes.yaml").to_json)
+
+    expect(form.attrs["some_attribute"]).to eq "something"
+  end
 end
