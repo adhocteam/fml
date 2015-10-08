@@ -1,0 +1,12 @@
+form:
+  title: "Simple sample form"
+  id: 0acd2dc0b8b325eb5698e50387b79d00d77b1f10
+  version: "1.0"
+  some_attribute: "something"
+  fieldsets:
+    - fieldset:
+      - field:
+          name: "whatever"
+          fieldType: "yes_no"
+          isRequired: true
+          label: "whatever"

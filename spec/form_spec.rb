@@ -11,6 +11,7 @@ describe FML::Form do
     expect(f.version).to eq "1.0"
     expect(f.bodySystem).to eq "some_body_system"
     expect(f.dependent).to eq "some_body_system"
+    expect(f.attrs).to eq Hash[]
     expect(f.fieldsets.length).to eq 1
     expect(f.fieldsets[0].length).to eq 10
 
@@ -27,6 +28,7 @@ describe FML::Form do
     expect(field.label).to eq "Would you like to check me?"
     expect(field.required).to eq false
     expect(field.conditional_on).to eq "hasDiabetes"
+    expect(field.attrs).to eq Hash[]
 
     field = f.fieldsets[0][2]
     expect(field.name).to eq "sampleDate"
@@ -477,5 +479,24 @@ EOM
     rescue FML::InvalidSpec => e
       expect(e.message).to eq "Conditional field \"sampleCheckbox\" cannot be required\n"
     end
+  end
+
+  it "loads a form attribute" do
+    form = getform("form_attributes.yaml")
+
+    expect(form.attrs["some_attribute"]).to eq "something"
+  end
+
+  it "exports attrs from to_json" do
+    form = getform("form_attributes.yaml")
+    obj = JSON.load(form.to_json)
+
+    expect(obj["form"]["attrs"]).to eq({"some_attribute" => "something"})
+  end
+
+  it "loads attrs from json" do
+    form = FML::Form.from_json(getform("form_attributes.yaml").to_json)
+
+    expect(form.attrs["some_attribute"]).to eq "something"
   end
 end
