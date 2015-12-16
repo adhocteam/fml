@@ -1,6 +1,6 @@
 # FMLForms
 
-Render [FML form documents](https://docs.google.com/a/adhocteam.us/document/d/1GBfEEJ48grDz0qwK-Tjppdmpp6mDBCND0UfrA0u1WF4/edit) into other formats.
+Render [FML form documents](https://github.com/adhocteam/fml#form-markup-language-spec) into other formats.
 
 ## Usage
 
