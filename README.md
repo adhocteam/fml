@@ -268,6 +268,7 @@ A text field for entering an integer value. Rejects all other numbers.
 
 ## 1.1 Example YAML FML document
 
+```
 form:
 
   title: "Tell us a little about yourself"
@@ -407,11 +408,13 @@ form:
             - name: "condo"
 
               value: "Condominium"
+```
 
 ## 1.2 Example JSON FML Document
 
 This JSON object is equivalent to the above YAML:
 
+```
 {
 
   "form": {
@@ -599,6 +602,7 @@ This JSON object is equivalent to the above YAML:
   }
 
 }
+```
 
 
 ## Deploying
