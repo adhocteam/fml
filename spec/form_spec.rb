@@ -233,7 +233,7 @@ they will be preserved
     begin
       FML::Form.from_json("{\ninvalid json")
     rescue FML::InvalidSpec => e
-      expect(e.message).to eq "JSON parser raised an error:\n757: unexpected token at '{\ninvalid json'\n"
+      expect(e.message).to match(/JSON parser raised an error:.*unexpected token/m)
     end
   end
 
